@@ -1,0 +1,7 @@
+
+= CREDITS.txt
+
+== Feedback
+
+Maik Schmidt : missing 'rufus-lru'
+

@@ -1,0 +1,48 @@
+
+= rufus-verbs CHANGELOG.txt
+
+
+== rufus-verbs - 0.9    released 2008/04/xx
+
+- bug  #19201 : :params not respected when specified in request - 
+- todo #19200 : added verbose mode (:v / :verbose) - 
+
+
+== rufus-verbs - 0.8    released 2008/02/18
+
+- todo #18134 : added a fopen method to Rufus::Verbs - s175
+- bug  #18144 : verb(URI) did not work. Fixed - s172
+
+
+== rufus-verbs - 0.7    released 2008/02/17
+
+- todo #18071 : can now use Rufus::Verbs::method_name() directly - s158
+
+
+== rufus-verbs - 0.6    released 2008/02/13
+
+- todo #17989 : :params (equivalent of :query) not working. Fixed. - s147
+- todo #17987 : implemented auto-escaping of query parameters and :no_escape - s147
+
+
+== rufus-verbs - 0.5    released 2008/02/01
+
+- todo #17638 : implemented HEAD - s135
+- todo #17637 : implemented OPTIONS - s136
+
+
+== rufus-verbs - 0.4    released 2008/01/28
+
+- todo #17548 : added the :no_redirections parameter - s120
+- bug  #17511 : missing explicit dependency on 'rufus-lru', reported by Maik Schmidt - s119
+
+
+== rufus-verbs - 0.3    released 2008/01/23
+
+- todo #17393 : implemented digest authentication ('auth-int') - s83
+- todo #17257 : implemented digest authentication ('auth' only for now) - s82
+- todo #17226 : implemented cookie support - s78
+
+
+== rufus-verbs - 0.2    released 2008/01/18
+
