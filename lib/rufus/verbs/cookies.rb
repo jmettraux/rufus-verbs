@@ -108,7 +108,7 @@ module Verbs
                     path = opts[:path]
                     cpath = c.path || "/"
 
-                    next unless cookie_acceptable?(opts, c)
+                    next unless cookie_acceptable?(opts, response, c)
 
                     domain = c.domain || host
 
@@ -124,7 +124,7 @@ module Verbs
             # Checks if the cookie is acceptable in the context of 
             # the request that sent it.
             #
-            def cookie_acceptable? (opts, cookie)
+            def cookie_acceptable? (opts, response, cookie)
 
                 # reject if :
                 #
@@ -149,7 +149,9 @@ module Verbs
                     return false if d != cdomain
                 end
 
-                path = opts[:path]
+                #path = opts[:path]
+                path = response.request.path
+
                 cpath = cookie.path || "/"
 
                 return false if path[0..cpath.length-1] != cpath

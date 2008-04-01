@@ -4,6 +4,7 @@
 
 == rufus-verbs - 0.9    released 2008/04/xx
 
+- bug  #19234 : cookie path checking broken - Fixed.
 - todo #19202 : EndPoint.cookies now readable
 - bug  #19201 : :params not respected when specified in request
 - todo #19200 : added verbose mode (:v / :verbose)

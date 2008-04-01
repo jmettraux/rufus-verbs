@@ -65,32 +65,37 @@ class Cookie0Test < Test::Unit::TestCase
 
         opts = { :host => 'rufus.rubyforge.org', :path => '/' }
         c = TestCookie.new '.rubyforge.org', '/'
-        assert cookie_acceptable?(opts, c)
+        r = TestResponse.new opts
+        assert cookie_acceptable?(opts, r, c)
 
         # * The value for the Domain attribute contains no embedded dots
         #   or does not start with a dot.
 
         opts = { :host => 'rufus.rubyforge.org', :path => '/' }
         c = TestCookie.new 'rufus.rubyforge.org', '/'
-        assert ! cookie_acceptable?(opts, c)
+        r = TestResponse.new opts
+        assert ! cookie_acceptable?(opts, r, c)
 
         opts = { :host => 'rufus.rubyforge.org', :path => '/' }
         c = TestCookie.new 'org', '/'
-        assert ! cookie_acceptable?(opts, c)
+        r = TestResponse.new opts
+        assert ! cookie_acceptable?(opts, r, c)
 
         # * The value for the Path attribute is not a prefix of the 
         #   request-URI.
 
         opts = { :host => 'rufus.rubyforge.org', :path => '/this' }
         c = TestCookie.new '.rubyforge.org', '/that'
-        assert ! cookie_acceptable?(opts, c)
+        r = TestResponse.new opts
+        assert ! cookie_acceptable?(opts, r, c)
 
         # * The value for the request-host does not domain-match the 
         #   Domain attribute.
 
         opts = { :host => 'rufus.rubyforg.org', :path => '/' }
         c = TestCookie.new '.rubyforge.org', '/'
-        assert ! cookie_acceptable?(opts, c)
+        r = TestResponse.new opts
+        assert ! cookie_acceptable?(opts, r, c)
 
         # * The request-host is a FQDN (not IP address) and has the form
         #   HD, where D is the value of the Domain attribute, and H is a
@@ -117,6 +122,24 @@ class Cookie0Test < Test::Unit::TestCase
                 @domain = domain
                 @path = path
                 @name = name
+            end
+        end
+
+        class TestResponse
+
+            def initialize (opts)
+
+                @path = opts[:path]
+            end
+
+            def request
+
+                r = Object.new
+                class << r
+                    attr_accessor :path
+                end
+                r.path = @path
+                r
             end
         end
 end
