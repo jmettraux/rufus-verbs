@@ -43,6 +43,16 @@ module Verbs
         protected
 
             #
+            # logs a unique message to the verbose channel (if any).
+            #
+            def vlog (opts, msg)
+
+                channel = get_channel(opts) or return
+
+                channel << msg
+            end
+
+            #
             # logs the outgoing request
             #
             def vlog_request (opts, req)

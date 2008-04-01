@@ -63,7 +63,7 @@ class DryRunTest < Test::Unit::TestCase
         req = ep.post(
             :dry_run => true,
             :resource => 'other',
-            :params => { 'a' => 'A', 'b' => 'B' })
+            :query => { 'a' => 'A', 'b' => 'B' })
         
         assert_equal "/other?a=A&b=B", req.path
     end

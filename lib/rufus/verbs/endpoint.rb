@@ -183,6 +183,11 @@ module Verbs
 
             # handle response
 
+            class << res
+                attr_accessor :request
+            end
+            res.request = req
+
             vlog_response opts, res
 
             register_cookies res, opts
@@ -444,6 +449,8 @@ module Verbs
                     path += "/#{r}" if r
                     path += "/#{i}" if i
                 end
+
+                path = path[1..-1] if path[0..1] == '//'
 
                 query = opts[:query] || opts[:params]
 
