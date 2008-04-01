@@ -48,6 +48,11 @@ module Verbs
     #
     module CookieMixin
 
+        #
+        # making the cookie jar available
+        #
+        attr_reader :cookies
+
         protected
 
             #
