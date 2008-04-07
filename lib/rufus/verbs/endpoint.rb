@@ -281,7 +281,7 @@ module Verbs
 
                 opts[:query] = 
                     r[4] || 
-                    opts[:params] || 
+                    opts[:params] || opts[:query] ||
                     @opts[:query] || @opts[:params] || 
                     {}
 
