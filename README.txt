@@ -322,9 +322,7 @@ On the Rufus-Ruby list[http://groups.google.com/group/rufus-ruby] :
 
 == source
 
-    #svn checkout http://rufus.rubyforge.org/svn/trunk/verbs
-
-Moved to http://github.com :
+http://github.com/jmettraux/rufus-verbs
 
     git clone git://github.com/jmettraux/rufus-verbs.git
 
@@ -333,6 +331,11 @@ Moved to http://github.com :
 
 John Mettraux, jmettraux@gmail.com,
 http://jmettraux.wordpress.com
+
+
+== the rest of Rufus
+
+http://rufus.rubyforge.org
 
 
 == license
