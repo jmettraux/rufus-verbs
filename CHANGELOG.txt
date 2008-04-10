@@ -2,7 +2,7 @@
 = rufus-verbs CHANGELOG.txt
 
 
-== rufus-verbs - 0.9    released 2008/04/xx
+== rufus-verbs - 0.9    released 2008/04/10
 
 - bug  #19408 : fopen now returns a instance that has a read() method.
                 problem pointed at by Scott Sproule.
