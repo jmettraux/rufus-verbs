@@ -3,5 +3,6 @@
 
 == Feedback
 
+Scott Sproule : fopen() result didn't have a read() method
 Maik Schmidt : missing 'rufus-lru'
 

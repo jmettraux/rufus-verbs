@@ -113,9 +113,15 @@ module Rufus::Verbs
             if block
                 block.call r
                 return
-            else
-                return r
             end
+
+            class << r
+                def read
+                    self.body
+                end
+            end unless r.respond_to?(:read)
+
+            return r
         end
 
         raise "can't handle scheme '#{u.scheme}' for #{u.to_s}"

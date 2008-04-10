@@ -163,6 +163,8 @@ The Rufus::Verbs module provides as well a <tt>fopen</tt> method, which mostly f
 
 But it follows redirections (has all the rufus-verbs features). It's provided for when targets are local files or URIs.
 
+This fopen() method makes sure to return an object that has a read() method (like a File instance has).
+
 
 The tests may provide good intel as on 'rufus-verbs' usage as well : http://rufus.rubyforge.org/svn/trunk/verbs/test/
 

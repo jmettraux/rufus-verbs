@@ -50,4 +50,11 @@ class UriTest < Test::Unit::TestCase
             assert_equal "{}", res.body.strip
         end
     end
+
+    def test_1
+
+        assert_kind_of String, fopen("CHANGELOG.txt").read
+        assert_kind_of String, fopen("file:CHANGELOG.txt").read
+        assert_kind_of String, fopen("http://localhost:7777/items").read
+    end
 end
