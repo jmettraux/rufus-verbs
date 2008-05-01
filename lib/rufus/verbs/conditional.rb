@@ -32,7 +32,7 @@
 # 2008/01/16
 #
 
-require 'rubygems'
+#require 'rubygems'
 require 'rufus/lru'
 
 

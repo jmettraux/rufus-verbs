@@ -34,7 +34,7 @@
 
 require 'webrick/cookie'
 
-require 'rubygems'
+#require 'rubygems'
 require 'rufus/lru'
 
 

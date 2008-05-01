@@ -1,4 +1,7 @@
 
+require 'rubygems'
+
+
 require 'dryrun_test'
 require 'iconditional_test'
 
