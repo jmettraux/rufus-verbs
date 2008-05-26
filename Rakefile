@@ -29,15 +29,15 @@ spec = Gem::Specification.new do |s|
     s.test_file         = "test/test.rb"
     s.has_rdoc          = true
     s.extra_rdoc_files  = [ 'README.txt' ]
-    
+
     [ 'rufus-lru' ].each do |d|
         s.requirements << d
         s.add_dependency d
     end
 
     files = FileList[ "{bin,docs,lib,test}/**/*" ]
-    files.exclude "rdoc" 
-    files.exclude "extras" 
+    files.exclude "rdoc"
+    files.exclude "extras"
     s.files = files.to_a
 end
 
@@ -94,10 +94,10 @@ Rake::RDocTask.new do |rd|
     rd.rdoc_dir = "html/rufus-verbs"
 
     rd.rdoc_files.include(
-        "README.txt", 
-        "CHANGELOG.txt", 
-        "LICENSE.txt", 
-        "CREDITS.txt", 
+        "README.txt",
+        "CHANGELOG.txt",
+        "LICENSE.txt",
+        "CREDITS.txt",
         "lib/**/*.rb")
 
     rd.title = "rufus-verbs rdoc"
