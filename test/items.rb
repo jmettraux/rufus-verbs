@@ -58,6 +58,7 @@ end
 class ItemServlet < WEBrick::HTTPServlet::AbstractServlet
 
     @@items = {}
+    @@last_item_id = -1
 
     @@lastmod = LastModifiedHash.new
 
@@ -80,7 +81,7 @@ class ItemServlet < WEBrick::HTTPServlet::AbstractServlet
 
             WEBrick::HTTPAuth.basic_auth(req, res, "items") do |u, p|
                 (u != nil and u == p)
-            end 
+            end
 
         elsif @auth == :digest
 
@@ -127,6 +128,9 @@ class ItemServlet < WEBrick::HTTPServlet::AbstractServlet
         return do_DELETE(req, res) if m == 'delete'
 
         i = item_id req
+
+        i = (@@last_item_id += 1) unless i
+
         items[i] = req.body
         lastmod.touch i
 
@@ -138,7 +142,7 @@ class ItemServlet < WEBrick::HTTPServlet::AbstractServlet
 
         i = item_id req
 
-        return reply(res, 404, "no item '#{i}'") unless items[i] 
+        return reply(res, 404, "no item '#{i}'") unless items[i]
 
         items[i] = req.body
         lastmod.touch i
@@ -150,7 +154,7 @@ class ItemServlet < WEBrick::HTTPServlet::AbstractServlet
 
         i = item_id req
 
-        return reply(res, 404, "no item '#{i}'") unless items[i] 
+        return reply(res, 404, "no item '#{i}'") unless items[i]
 
         items.delete i
         lastmod.delete i
@@ -172,7 +176,7 @@ class ItemServlet < WEBrick::HTTPServlet::AbstractServlet
         def items
             @@items
         end
-        
+
         def lastmod
             @@lastmod
         end
@@ -202,7 +206,7 @@ class ItemServlet < WEBrick::HTTPServlet::AbstractServlet
                 items
             end
 
-            [ representation, 
+            [ representation,
               representation.inspect.hash.to_s,
               lastmod.last_modified(key) ]
         end
@@ -230,7 +234,7 @@ class ThingServlet < WEBrick::HTTPServlet::AbstractServlet
     def do_GET (req, res)
 
         res.set_redirect(
-            WEBrick::HTTPStatus[303], 
+            WEBrick::HTTPStatus[303],
             "http://localhost:7777/items")
     end
 end
@@ -281,7 +285,7 @@ class ItemServer
 
         port = args[:port] || 7777
 
-        #al = [ 
+        #al = [
         #    [ "", WEBrick::AccessLog::COMMON_LOG_FORMAT ],
         #    [ "", WEBrick::AccessLog::REFERER_LOG_FORMAT ]]
 
@@ -298,7 +302,7 @@ class ItemServer
         @server.mount "/cookie", CookieServlet
 
         [ 'INT', 'TERM' ].each do |signal|
-            trap(signal) { shutdown } 
+            trap(signal) { shutdown }
         end
     end
 

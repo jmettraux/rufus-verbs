@@ -7,6 +7,8 @@
 # Sun Jan 13 12:33:03 JST 2008
 #
 
+require 'rubygems'
+
 require 'test/unit'
 require 'testbase'
 
@@ -45,6 +47,23 @@ class SimpleTest < Test::Unit::TestCase
         assert_equal 200, res.code.to_i
 
         expect 200, { 0 => "Toto3" }, get(:uri => "http://localhost:7777/items")
+    end
+
+    def test_0b
+
+        expect 200, {}, get(:uri => "http://localhost:7777/items")
+
+        res = post :uri => "http://localhost:7777/items", :d => "Toto"
+        assert_equal 201, res.code.to_i
+        assert_equal "http://localhost:7777/items/0", res['Location']
+
+        expect 200, "\"Toto\"", get(:uri => "http://localhost:7777/items/0")
+
+        res = post :uri => "http://localhost:7777/items", :d => "Smurf"
+        assert_equal 201, res.code.to_i
+        assert_equal "http://localhost:7777/items/1", res['Location']
+
+        expect 200, "\"Smurf\"", get(:uri => "http://localhost:7777/items/1")
     end
 
     def test_1
