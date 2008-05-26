@@ -24,3 +24,5 @@ require 'escape_test'
 require 'uri_test'
 require 'fopen_test'
 
+require 'timeout_test'
+

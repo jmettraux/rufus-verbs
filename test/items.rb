@@ -276,6 +276,17 @@ class CookieServlet < WEBrick::HTTPServlet::AbstractServlet
 end
 
 #
+# a servlet that doesn't reply (for timeout testing)
+#
+class LostServlet < WEBrick::HTTPServlet::AbstractServlet
+
+    def do_GET (req, res)
+
+        sleep 200
+    end
+end
+
+#
 # Serving items, a dummy resource...
 # Also serving things, which just redirect to items...
 #
@@ -300,6 +311,7 @@ class ItemServer
         @server.mount "/items", ItemServlet
         @server.mount "/things", ThingServlet
         @server.mount "/cookie", CookieServlet
+        @server.mount "/lost", LostServlet
 
         [ 'INT', 'TERM' ].each do |signal|
             trap(signal) { shutdown }

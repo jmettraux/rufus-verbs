@@ -8,10 +8,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -49,12 +49,12 @@ module Verbs
     USER_AGENT = "Ruby rufus-verbs #{VERSION}"
 
     #
-    # An EndPoint can be used to share common options among a set of 
+    # An EndPoint can be used to share common options among a set of
     # requests.
     #
     #     ep = EndPoint.new(
-    #         :host => "restful.server", 
-    #         :port => 7080, 
+    #         :host => "restful.server",
+    #         :port => 7080,
     #         :resource => "inventory/tools")
     #
     #     res = ep.get :id => 1
@@ -63,7 +63,7 @@ module Verbs
     #     res = ep.get :id => 0
     #         # where did the hammer go ?
     #
-    # When a request gets prepared, the option values will be looked up 
+    # When a request gets prepared, the option values will be looked up
     # in (1) its local (request) options, then (2) in the EndPoint options.
     #
     class EndPoint
@@ -83,7 +83,7 @@ module Verbs
 
             compute_target @opts
 
-            @opts[:http_basic_authentication] = 
+            @opts[:http_basic_authentication] =
                 opts[:http_basic_authentication] || opts[:hba]
 
             @opts[:user_agent] ||= USER_AGENT
@@ -126,7 +126,7 @@ module Verbs
         #
         # This is the method called by the module methods verbs.
         #
-        # For example, 
+        # For example,
         #
         #     RufusVerbs.get(args)
         #
@@ -264,10 +264,10 @@ module Verbs
                 elsif u
 
                     u = URI.parse u.to_s unless u.is_a?(URI)
-                    [ u.scheme, 
-                      u.host, 
-                      u.port, 
-                      u.path, 
+                    [ u.scheme,
+                      u.host,
+                      u.port,
+                      u.path,
                       query_to_h(u.query) ]
                 else
 
@@ -279,18 +279,18 @@ module Verbs
                 opts[:port] = r[2] || @opts[:port]
                 opts[:path] = r[3] || @opts[:path]
 
-                opts[:query] = 
-                    r[4] || 
+                opts[:query] =
+                    r[4] ||
                     opts[:params] || opts[:query] ||
-                    @opts[:query] || @opts[:params] || 
+                    @opts[:query] || @opts[:params] ||
                     {}
 
                 opts.delete :path if opts[:path] == ""
 
-                opts[:c_uri] = [ 
-                    opts[:scheme], 
-                    opts[:host], 
-                    opts[:port], 
+                opts[:c_uri] = [
+                    opts[:scheme],
+                    opts[:host],
+                    opts[:port],
                     opts[:path],
                     opts[:query] ].inspect
                         #
@@ -303,7 +303,7 @@ module Verbs
             # Creates the Net::HTTP request instance.
             #
             # If :fake_put is set, will use Net::HTTP::Post
-            # and make sure the query string contains '_method=put' (or 
+            # and make sure the query string contains '_method=put' (or
             # '_method=delete').
             #
             # This call will also advertise this rufus-verbs as
@@ -311,7 +311,7 @@ module Verbs
             #
             def create_request (method, opts)
 
-                if (o(opts, :fake_put) and 
+                if (o(opts, :fake_put) and
                     (method == :put or method == :delete))
 
                     opts[:query][:_method] = method.to_s
@@ -362,7 +362,7 @@ module Verbs
             end
 
             #
-            # In that base class, it's empty. 
+            # In that base class, it's empty.
             # It's implemented in ConditionalEndPoint.
             #
             # Only called for a GET.
@@ -381,9 +381,11 @@ module Verbs
                 compute_proxy opts
 
                 http = Net::HTTP.new(
-                    opts[:host], opts[:port], 
+                    opts[:host], opts[:port],
                     opts[:proxy_host], opts[:proxy_port],
                     opts[:proxy_user], opts[:proxy_pass])
+
+                set_timeout http, opts
 
                 return http unless opts[:scheme] == 'https'
 
@@ -403,6 +405,21 @@ module Verbs
                 http.cert_store = store
 
                 http
+            end
+
+            #
+            # Sets both the open_timeout and the read_timeout for the http
+            # instance
+            #
+            def set_timeout (http, opts)
+
+                to = o(opts, :timeout) || o(opts, :to)
+                to = to.to_i
+
+                return if to == 0
+
+                http.open_timeout = to
+                http.read_timeout = to
             end
 
             #
@@ -466,7 +483,7 @@ module Verbs
 
                 return nil unless q
 
-                q.split("&").inject({}) do |r, e| 
+                q.split("&").inject({}) do |r, e|
                     s = e.split("=")
                     r[s[0]] = s[1]
                     r
@@ -474,11 +491,11 @@ module Verbs
             end
 
             #
-            #     { "a" => "A", "b" => "B" } -> "a=A&b=B" 
+            #     { "a" => "A", "b" => "B" } -> "a=A&b=B"
             #
             def h_to_query (h, opts)
 
-                h.entries.collect { |k, v| 
+                h.entries.collect { |k, v|
                     unless o(opts, :no_escape)
                         k = URI.escape k.to_s
                         v = URI.escape v.to_s
@@ -502,7 +519,7 @@ module Verbs
                     req.set_form_data fd, sep
                 elsif block
                     req.body = block.call req
-                else 
+                else
                     req.body = ""
                 end
             end
@@ -544,7 +561,7 @@ module Verbs
                         opts[:path], opts[:query] = location.split "?"
                     end
 
-                    if (authentication_is_on?(opts) and 
+                    if (authentication_is_on?(opts) and
                         [ opts[:scheme], opts[:host] ] != prev_host)
 
                         raise(

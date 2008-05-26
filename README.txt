@@ -288,6 +288,12 @@ the resource (or the middle) of a full resource path (see :base)
 * <b>:ssl_verify_peer</b> (boolean, RE)
 by default, rufus-verbs doesn't verify ssl certificates. With this option set to true, it will.
 
+* <b>:timeout</b> (integer, RE)
+sets the timeout (both open_ and read_timeout) for the request (and the endpoint), expects a value expressed in seconds.
+
+* <b>:to</b> (integer, RE)
+shortcut for :timeout
+
 * <b>:u</b> (uri, string, RE)
 the short version of :uri
 

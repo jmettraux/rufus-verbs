@@ -1,6 +1,10 @@
 
 = rufus-verbs CHANGELOG.txt
 
+== rufus-verbs - 0.10   not yet released
+
+- todo #18981 : added timeout tuning (:timeout / :to)
+
 
 == rufus-verbs - 0.9    released 2008/04/10
 
