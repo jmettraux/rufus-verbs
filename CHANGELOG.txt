@@ -3,6 +3,7 @@
 
 == rufus-verbs - 0.10   not yet released
 
+- bug  #20395 : ssl_verification was on by default. Fixed (off).
 - todo #18981 : added timeout tuning (:timeout / :to)
 
 

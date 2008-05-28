@@ -395,9 +395,9 @@ module Verbs
                 http.enable_post_connection_check = true
 
                 http.verify_mode = if o(opts, :ssl_verify_peer)
-                    OpenSSL::SSL::VERIFY_NONE
-                else
                     OpenSSL::SSL::VERIFY_PEER
+                else
+                    OpenSSL::SSL::VERIFY_NONE
                 end
 
                 store = OpenSSL::X509::Store.new
