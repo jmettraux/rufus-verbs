@@ -7,6 +7,8 @@
 # Mon Jan 14 00:07:38 JST 2008
 #
 
+require 'rubygems'
+
 require 'test/unit'
 require 'testbase'
 
@@ -28,9 +30,9 @@ class HttpsTest < Test::Unit::TestCase
     def test_0
 
         res = expect(
-            200, 
-            nil, 
-            get(:uri => "http://jmettraux.wordpress.com/2006/03/31/cvs-down/"))
+            200,
+            nil,
+            get(:uri => "https://jmettraux.wordpress.com/2006/03/31/cvs-down/"))
 
         #res.each_header do |h|
         #    p h

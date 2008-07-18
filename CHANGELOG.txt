@@ -1,7 +1,8 @@
 
 = rufus-verbs CHANGELOG.txt
 
-== rufus-verbs - 0.10   not yet released
+
+== rufus-verbs - 0.10   released 2008/05/28
 
 - bug  #20395 : ssl_verification was on by default. Fixed (off).
 - todo #18981 : added timeout tuning (:timeout / :to)
