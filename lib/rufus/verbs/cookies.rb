@@ -1,6 +1,5 @@
-#
 #--
-# Copyright (c) 2008, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2008-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,21 +19,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-# (MIT license)
+# Made in Japan.
 #++
-#
 
-#
-# John Mettraux
-#
-# Made in Japan
-#
-# 2008/01/19
-#
 
 require 'webrick/cookie'
 
-#require 'rubygems'
 require 'rufus/lru'
 
 
@@ -55,124 +45,124 @@ module Verbs
 
     protected
 
-      #
-      # Prepares the instance variable @cookies for storing
-      # cooking for this endpoint.
-      #
-      # Reads the :cookies endpoint option for determining the
-      # size of the cookie jar (77 by default).
-      #
-      def prepare_cookie_jar
+    #
+    # Prepares the instance variable @cookies for storing
+    # cooking for this endpoint.
+    #
+    # Reads the :cookies endpoint option for determining the
+    # size of the cookie jar (77 by default).
+    #
+    def prepare_cookie_jar
 
-        o = @opts[:cookies]
+      o = @opts[:cookies]
 
-        return unless o and o != false
+      return unless o and o != false
 
-        s = o.to_s.to_i
-        s = 77 if s < 1
+      s = o.to_s.to_i
+      s = 77 if s < 1
 
-        @cookies = CookieJar.new s
-      end
+      @cookies = CookieJar.new s
+    end
 
-      #
-      # Parses the HTTP response for a potential 'Set-Cookie' header,
-      # parses and returns it as a hash.
-      #
-      def parse_cookies (response)
+    #
+    # Parses the HTTP response for a potential 'Set-Cookie' header,
+    # parses and returns it as a hash.
+    #
+    def parse_cookies (response)
 
-        c = response['Set-Cookie']
-        return nil unless c
-        Cookie.parse_set_cookies c
-      end
+      c = response['Set-Cookie']
+      return nil unless c
+      Cookie.parse_set_cookies c
+    end
 
-      #
-      # (This method will have no effect if the EndPoint is not
-      # tracking cookies)
-      #
-      # Registers a potential cookie set by the server.
-      #
-      def register_cookies (response, opts)
+    #
+    # (This method will have no effect if the EndPoint is not
+    # tracking cookies)
+    #
+    # Registers a potential cookie set by the server.
+    #
+    def register_cookies (response, opts)
 
-        return unless @cookies
+      return unless @cookies
 
-        cs = parse_cookies response
+      cs = parse_cookies response
 
-        return unless cs
+      return unless cs
 
-        # "The origin server effectively ends a session by
-        #  sending the client a Set-Cookie header with Max-Age=0"
+      # "The origin server effectively ends a session by
+      #  sending the client a Set-Cookie header with Max-Age=0"
 
-        cs.each do |c|
+      cs.each do |c|
 
-          host = opts[:host]
-          path = opts[:path]
-          cpath = c.path || "/"
+        host = opts[:host]
+        path = opts[:path]
+        cpath = c.path || "/"
 
-          next unless cookie_acceptable?(opts, response, c)
+        next unless cookie_acceptable?(opts, response, c)
 
-          domain = c.domain || host
+        domain = c.domain || host
 
-          if c.max_age == 0
-            @cookies.remove_cookie domain, path, c
-          else
-            @cookies.add_cookie domain, path, c
-          end
+        if c.max_age == 0
+          @cookies.remove_cookie domain, path, c
+        else
+          @cookies.add_cookie domain, path, c
         end
       end
+    end
 
+    #
+    # Checks if the cookie is acceptable in the context of
+    # the request that sent it.
+    #
+    def cookie_acceptable? (opts, response, cookie)
+
+      # reject if :
       #
-      # Checks if the cookie is acceptable in the context of
-      # the request that sent it.
-      #
-      def cookie_acceptable? (opts, response, cookie)
+      # * The value for the Path attribute is not a prefix of the
+      #   request-URI.
+      # * The value for the Domain attribute contains no embedded dots
+      #   or does not start with a dot.
+      # * The value for the request-host does not domain-match the
+      #   Domain attribute.
+      # * The request-host is a FQDN (not IP address) and has the form
+      #   HD, where D is the value of the Domain attribute, and H is a
+      #   string that contains one or more dots.
 
-        # reject if :
-        #
-        # * The value for the Path attribute is not a prefix of the
-        #   request-URI.
-        # * The value for the Domain attribute contains no embedded dots
-        #   or does not start with a dot.
-        # * The value for the request-host does not domain-match the
-        #   Domain attribute.
-        # * The request-host is a FQDN (not IP address) and has the form
-        #   HD, where D is the value of the Domain attribute, and H is a
-        #   string that contains one or more dots.
+      cdomain = cookie.domain
 
-        cdomain = cookie.domain
+      if cdomain
 
-        if cdomain
+        return false unless cdomain.index '.'
+        return false if cdomain[0, 1] != '.'
 
-          return false unless cdomain.index '.'
-          return false if cdomain[0, 1] != '.'
-
-          h, d = split_host(opts[:host])
-          return false if d != cdomain
-        end
-
-        #path = opts[:path]
-        path = response.request.path
-
-        cpath = cookie.path || "/"
-
-        return false if path[0..cpath.length-1] != cpath
-
-        true
+        h, d = split_host(opts[:host])
+        return false if d != cdomain
       end
 
-      #
-      # Places the 'Cookie' header in the request if appropriate.
-      #
-      # (This method will have no effect if the EndPoint is not
-      # tracking cookies)
-      #
-      def mention_cookies (request, opts)
+      #path = opts[:path]
+      path = response.request.path
 
-        return unless @cookies
+      cpath = cookie.path || "/"
 
-        cs = @cookies.fetch_cookies opts[:host], opts[:path]
+      return false if path[0..cpath.length-1] != cpath
 
-        request['Cookie'] = cs.collect { |c| c.to_header_s }.join(",")
-      end
+      true
+    end
+
+    #
+    # Places the 'Cookie' header in the request if appropriate.
+    #
+    # (This method will have no effect if the EndPoint is not
+    # tracking cookies)
+    #
+    def mention_cookies (request, opts)
+
+      return unless @cookies
+
+      cs = @cookies.fetch_cookies opts[:host], opts[:path]
+
+      request['Cookie'] = cs.collect { |c| c.to_header_s }.join(",")
+    end
   end
 
   #
@@ -184,12 +174,12 @@ module Verbs
 
     def to_header_s
 
-      ret = ""
-      ret << @name << "=" << @value
-      ret << "; " << "$Version=" << @version.to_s if @version > 0
-      ret << "; " << "$Domain="  << @domain  if @domain
-      ret << "; " << "$Port="  << @port if @port
-      ret << "; " << "$Path="  << @path if @path
+      ret = ''
+      ret << @name << '=' << @value
+      ret << '; ' << '$Version=' << @version.to_s if @version > 0
+      ret << '; ' << '$Domain=' << @domain if @domain
+      ret << '; ' << '$Port=' << @port if @port
+      ret << '; ' << '$Path=' << @path if @path
       ret
     end
   end
@@ -306,21 +296,21 @@ module Verbs
 
     private
 
-      #
-      # Returns all the cookies that match a domain (host) and a path.
-      #
-      def do_fetch (dh, path)
+    #
+    # Returns all the cookies that match a domain (host) and a path.
+    #
+    def do_fetch (dh, path)
 
-        return [] unless dh
+      return [] unless dh
 
-        keys = dh.keys.sort.find_all do |k|
-          path[0..k.path.length-1] == k.path
-        end
-        keys.inject([]) do |r, k|
-          r << dh[k]
-          r
-        end
+      keys = dh.keys.sort.find_all do |k|
+        path[0..k.path.length-1] == k.path
       end
+      keys.inject([]) do |r, k|
+        r << dh[k]
+        r
+      end
+    end
   end
 end
 end

@@ -1,6 +1,5 @@
-#
 #--
-# Copyright (c) 2008, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2008-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +19,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-# (MIT license)
+# Made in Japan.
 #++
-#
 
-#
-# John Mettraux
-#
-# Made in Japan
-#
-# 2008/01/16
-#
 
-#require 'rubygems'
 require 'rufus/lru'
 
 
@@ -87,53 +77,53 @@ module Rufus::Verbs
 
     private
 
-      #
-      # If the representation has already been gotten, send
-      # potential If-Modified-Since and/or If-None-Match.
-      #
-      def add_conditional_headers (req, opts)
+    #
+    # If the representation has already been gotten, send
+    # potential If-Modified-Since and/or If-None-Match.
+    #
+    def add_conditional_headers (req, opts)
 
-        # if path is cached send since and/or match
+      # if path is cached send since and/or match
 
-        e = @cache[opts[:c_uri]]
+      e = @cache[opts[:c_uri]]
 
-        return unless e # not cached
+      return unless e # not cached
 
-        req['If-Modified-Since'] = e.lastmod if e.lastmod
-        req['If-None-Match'] = e.etag if e.etag
+      req['If-Modified-Since'] = e.lastmod if e.lastmod
+      req['If-None-Match'] = e.etag if e.etag
 
-        opts[:c_cached] = e
-      end
+      opts[:c_cached] = e
+    end
 
-      def handle_response (method, res, opts)
+    def handle_response (method, res, opts)
 
-        # if method is get and reply is 200, cache (if et and/or lm)
-        # if method is get and reply is 304, return from cache
+      # if method is get and reply is 200, cache (if et and/or lm)
+      # if method is get and reply is 304, return from cache
 
-        super
+      super
 
-        code = res.code.to_i
+      code = res.code.to_i
 
-        return opts[:c_cached] if code == 304
+      return opts[:c_cached] if code == 304
 
-        cache(res, opts) if code == 200
+      cache(res, opts) if code == 200
 
-        res
-      end
+      res
+    end
 
-      def cache (res, opts)
+    def cache (res, opts)
 
-        class << res
-          def lastmod
-            self['Last-Modified']
-          end
-          def etag
-            self['Etag']
-          end
+      class << res
+        def lastmod
+          self['Last-Modified']
         end
-
-        @cache[opts[:c_uri]] = res
+        def etag
+          self['Etag']
+        end
       end
+
+      @cache[opts[:c_uri]] = res
+    end
   end
 end
 

@@ -1,6 +1,5 @@
-#
 #--
-# Copyright (c) 2008, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2008-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-# (MIT license)
+# Made in Japan.
 #++
-#
 
-#
-# John Mettraux
-#
-# Made in Japan
-#
-# 2008/01/21
-#
 
 require 'digest/md5'
 
@@ -94,166 +85,166 @@ module Verbs
 
     protected
 
-      #
-      # Returns true if :digest_authentication is set at endpoint
-      # or request level.
-      #
-      def no_digest_auth
+    #
+    # Returns true if :digest_authentication is set at endpoint
+    # or request level.
+    #
+    def no_digest_auth
 
-        (not o(opts, :digest_authentication))
+      (not o(opts, :digest_authentication))
+    end
+
+    #
+    # To be enhanced.
+    #
+    # (For example http://www.intertwingly.net/blog/1585.html)
+    #
+    def generate_cnonce
+
+      Digest::MD5.hexdigest("%x" % (Time.now.to_i + rand(65535)))
+    end
+
+    def request_challenge (req, opts)
+
+      op = opts.dup
+
+      op[:digest_authentication] = false
+        # preventing an infinite loop
+
+      method = req.class.const_get(:METHOD).downcase.to_sym
+      #method = :get
+
+      res = request(method, op)
+
+      return false if res.code.to_i != 401
+
+      @challenge = Challenge.new res
+
+      true
+    end
+
+    #
+    # Generates an MD5 digest of the arguments (joined by ":").
+    #
+    def h (*args)
+
+      Digest::MD5.hexdigest(args.join(":"))
+    end
+
+    #
+    # Generates the Authentication header that will be returned
+    # to the server.
+    #
+    def generate_header (req, opts)
+
+      @nonce_count += 1
+
+      user, pass = o(opts, :digest_authentication)
+      realm = @challenge.realm || ""
+      method = req.class.const_get(:METHOD)
+      path = opts[:path]
+
+      a1 = if @challenge.algorithm == 'MD5-sess'
+        h(h(user, realm, pass), @challenge.nonce, @cnonce)
+      else
+        h(user, realm, pass)
       end
 
-      #
-      # To be enhanced.
-      #
-      # (For example http://www.intertwingly.net/blog/1585.html)
-      #
-      def generate_cnonce
-
-        Digest::MD5.hexdigest("%x" % (Time.now.to_i + rand(65535)))
+      a2, qop = if @challenge.qop.include?("auth-int")
+        [ h(method, path, h(req.body)), "auth-int" ]
+      else
+        [ h(method, path), "auth" ]
       end
 
-      def request_challenge (req, opts)
+      nc = ('%08x' % @nonce_count)
 
-        op = opts.dup
+      digest = h(
+        #a1, @challenge.nonce, nc, @cnonce, @challenge.qop, a2)
+        a1, @challenge.nonce, nc, @cnonce, "auth", a2)
 
-        op[:digest_authentication] = false
-          # preventing an infinite loop
+      header = ""
+      header << "Digest username=\"#{user}\", "
+      header << "realm=\"#{realm}\", "
+      header << "qop=\"#{qop}\", "
+      header << "uri=\"#{path}\", "
+      header << "nonce=\"#{@challenge.nonce}\", "
+      #header << "nc=##{nc}, "
+      header << "nc=#{nc}, "
+      header << "cnonce=\"#{@cnonce}\", "
+      header << "algorithm=\"#{@challenge.algorithm}\", "
+      #header << "algorithm=\"MD5-sess\", "
+      header << "response=\"#{digest}\", "
+      header << "opaque=\"#{@challenge.opaque}\""
 
-        method = req.class.const_get(:METHOD).downcase.to_sym
-        #method = :get
+      header
+    end
 
-        res = request(method, op)
+    #
+    # A common parent class for Challenge and AuthInfo.
+    # Their header parsing code is here.
+    #
+    class ServerReply
 
-        return false if res.code.to_i != 401
+      def initialize (res)
 
-        @challenge = Challenge.new res
+        s = res[header_name]
+        return nil unless s
 
-        true
-      end
+        s = s[7..-1] if s[0, 6] == "Digest"
 
-      #
-      # Generates an MD5 digest of the arguments (joined by ":").
-      #
-      def h (*args)
+        s = s.split ","
 
-        Digest::MD5.hexdigest(args.join(":"))
-      end
+        s.each do |e|
 
-      #
-      # Generates the Authentication header that will be returned
-      # to the server.
-      #
-      def generate_header (req, opts)
+          k, v = parse_entry e
 
-        @nonce_count += 1
-
-        user, pass = o(opts, :digest_authentication)
-        realm = @challenge.realm || ""
-        method = req.class.const_get(:METHOD)
-        path = opts[:path]
-
-        a1 = if @challenge.algorithm == 'MD5-sess'
-          h(h(user, realm, pass), @challenge.nonce, @cnonce)
-        else
-          h(user, realm, pass)
-        end
-
-        a2, qop = if @challenge.qop.include?("auth-int")
-          [ h(method, path, h(req.body)), "auth-int" ]
-        else
-          [ h(method, path), "auth" ]
-        end
-
-        nc = ('%08x' % @nonce_count)
-
-        digest = h(
-          #a1, @challenge.nonce, nc, @cnonce, @challenge.qop, a2)
-          a1, @challenge.nonce, nc, @cnonce, "auth", a2)
-
-        header = ""
-        header << "Digest username=\"#{user}\", "
-        header << "realm=\"#{realm}\", "
-        header << "qop=\"#{qop}\", "
-        header << "uri=\"#{path}\", "
-        header << "nonce=\"#{@challenge.nonce}\", "
-        #header << "nc=##{nc}, "
-        header << "nc=#{nc}, "
-        header << "cnonce=\"#{@cnonce}\", "
-        header << "algorithm=\"#{@challenge.algorithm}\", "
-        #header << "algorithm=\"MD5-sess\", "
-        header << "response=\"#{digest}\", "
-        header << "opaque=\"#{@challenge.opaque}\""
-
-        header
-      end
-
-      #
-      # A common parent class for Challenge and AuthInfo.
-      # Their header parsing code is here.
-      #
-      class ServerReply
-
-        def initialize (res)
-
-          s = res[header_name]
-          return nil unless s
-
-          s = s[7..-1] if s[0, 6] == "Digest"
-
-          s = s.split ","
-
-          s.each do |e|
-
-            k, v = parse_entry e
-
-            if k == 'stale'
-              @stale = (v.downcase == 'true')
-            elsif k == 'nc'
-              @nc = v.to_i
-            elsif k == 'qop'
-              @qop = v.split ","
-            else
-              instance_variable_set "@#{k}".to_sym, v
-            end
+          if k == 'stale'
+            @stale = (v.downcase == 'true')
+          elsif k == 'nc'
+            @nc = v.to_i
+          elsif k == 'qop'
+            @qop = v.split ","
+          else
+            instance_variable_set "@#{k}".to_sym, v
           end
         end
-
-        protected
-
-          def parse_entry (e)
-
-            k, v = e.split "=", 2
-            v = v[1..-2] if v[0, 1] == '"'
-            [ k.strip, v.strip ]
-          end
       end
 
-      #
-      # Used when parsing a 'www-authenticate' header challenge.
-      #
-      class Challenge < ServerReply
+      protected
 
-        attr_accessor \
-          :opaque, :algorithm, :qop, :stale, :nonce, :realm, :charset
+      def parse_entry (e)
 
-        def header_name
-          'www-authenticate'
-        end
+        k, v = e.split '=', 2
+        v = v[1..-2] if v[0, 1] == '"'
+        [ k.strip, v.strip ]
       end
+    end
 
-      #
-      # Used when parsing a 'authentication-info' header info.
-      #
-      class AuthInfo < ServerReply
+    #
+    # Used when parsing a 'www-authenticate' header challenge.
+    #
+    class Challenge < ServerReply
 
-        attr_accessor \
-          :cnonce, :rspauth, :nextnonce, :qop, :nc
+      attr_accessor \
+        :opaque, :algorithm, :qop, :stale, :nonce, :realm, :charset
 
-        def header_name
-          'authentication-info'
-        end
+      def header_name
+        'www-authenticate'
       end
+    end
+
+    #
+    # Used when parsing a 'authentication-info' header info.
+    #
+    class AuthInfo < ServerReply
+
+      attr_accessor \
+        :cnonce, :rspauth, :nextnonce, :qop, :nc
+
+      def header_name
+        'authentication-info'
+      end
+    end
   end
 
 end

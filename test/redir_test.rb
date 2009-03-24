@@ -7,34 +7,32 @@
 # Sun Jan 13 20:02:25 JST 2008
 #
 
-require 'test/unit'
-require 'testbase'
 
-require 'rufus/verbs'
+require File.dirname(__FILE__) + '/base.rb'
 
 
 class RedirTest < Test::Unit::TestCase
-    include TestBaseMixin
+  include TestBaseMixin
 
-    include Rufus::Verbs
+  include Rufus::Verbs
 
 
-    def test_0
+  def test_0
 
-        expect 200, {}, get(:uri => "http://localhost:7777/things")
-    end
+    expect 200, {}, get(:uri => "http://localhost:7777/things")
+  end
 
-    #
-    # testing the :no_redirections directive
-    #
-    def test_1
+  #
+  # testing the :no_redirections directive
+  #
+  def test_1
 
-        res = get "http://localhost:7777/things", :no_redirections => true
-        assert_equal 303, res.code.to_i
+    res = get "http://localhost:7777/things", :no_redirections => true
+    assert_equal 303, res.code.to_i
 
-        res = get("http://localhost:7777/things", :noredir => true)
-        assert_equal 303, res.code.to_i
+    res = get("http://localhost:7777/things", :noredir => true)
+    assert_equal 303, res.code.to_i
 
-        expect 200, {}, get("http://localhost:7777/items", :noredir => true)
-    end
+    expect 200, {}, get("http://localhost:7777/items", :noredir => true)
+  end
 end

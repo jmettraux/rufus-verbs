@@ -7,10 +7,7 @@
 # Sun Jan 13 12:33:03 JST 2008
 #
 
-require 'test/unit'
-require 'testbase'
-
-require 'rufus/verbs'
+require File.dirname(__FILE__) + '/base.rb'
 
 
 class Auth1Test < Test::Unit::TestCase

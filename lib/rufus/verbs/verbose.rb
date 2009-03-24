@@ -1,6 +1,5 @@
-#
 #--
-# Copyright (c) 2008, John Mettraux, jmettraux@gmail.com
+# Copyright (c) 2008-2009, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-# (MIT license)
+# Made in Japan.
 #++
-#
 
-#
-# John Mettraux
-#
-# Made in Japan
-#
-# 2008/03/31
-#
 
 module Rufus
 module Verbs
@@ -42,71 +33,71 @@ module Verbs
 
     protected
 
-      #
-      # logs a unique message to the verbose channel (if any).
-      #
-      def vlog (opts, msg)
+    #
+    # logs a unique message to the verbose channel (if any).
+    #
+    def vlog (opts, msg)
 
-        channel = get_channel(opts) or return
+      channel = get_channel(opts) or return
 
-        channel << msg
+      channel << msg
+    end
+
+    #
+    # logs the outgoing request
+    #
+    def vlog_request (opts, req)
+
+      channel = get_channel(opts) or return
+
+      channel << "> #{req.method} #{req.path}\n"
+
+      req.each do |k, v|
+        channel << "> #{k}: #{v}\n"
       end
 
-      #
-      # logs the outgoing request
-      #
-      def vlog_request (opts, req)
+      channel << ">\n"
+    end
 
-        channel = get_channel(opts) or return
+    def vlog_http (opts, http)
 
-        channel << "> #{req.method} #{req.path}\n"
+      channel = get_channel(opts) or return
 
-        req.each do |k, v|
-          channel << "> #{k}: #{v}\n"
-        end
+      channel << "* #{http.address}:#{http.port}\n"
+      channel << "*\n"
+    end
 
-        channel << ">\n"
+    #
+    # logs the incoming response
+    #
+    def vlog_response (opts, res)
+
+      channel = get_channel(opts) or return
+
+      channel << "< #{res.code} #{res.message}\n"
+      channel << "<\n"
+
+      res.each do |k, v|
+        channel << "< #{k}: #{v}\n"
       end
 
-      def vlog_http (opts, http)
-
-        channel = get_channel(opts) or return
-
-        channel << "* #{http.address}:#{http.port}\n"
-        channel << "*\n"
-      end
-
-      #
-      # logs the incoming response
-      #
-      def vlog_response (opts, res)
-
-        channel = get_channel(opts) or return
-
-        channel << "< #{res.code} #{res.message}\n"
-        channel << "<\n"
-
-        res.each do |k, v|
-          channel << "< #{k}: #{v}\n"
-        end
-
-        channel << "<\n"
-      end
+      channel << "<\n"
+    end
 
     private
 
-      def get_channel (opts)
+    def get_channel (opts)
 
-        v = o(opts, [ :verbose, :v ])
+      v = o(opts, [ :verbose, :v ])
 
-        return nil if (not v) or (v.to_s == 'false')
+      return nil if (not v) or (v.to_s == 'false')
 
-        v = $stdout if v.to_s == 'true'
+      v = $stdout if v.to_s == 'true'
 
-        return nil unless v.is_a?(IO)
+      return nil unless v.is_a?(IO)
 
-        v
-      end
+      v
+    end
   end
 
 end

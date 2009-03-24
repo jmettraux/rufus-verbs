@@ -7,38 +7,33 @@
 # Mon Jan 14 00:07:38 JST 2008
 #
 
-require 'rubygems'
-
-require 'test/unit'
-require 'testbase'
-
-require 'rufus/verbs'
+require File.dirname(__FILE__) + '/base.rb'
 
 
 class HttpsTest < Test::Unit::TestCase
-    include TestBaseMixin
+  include TestBaseMixin
 
-    include Rufus::Verbs
+  include Rufus::Verbs
 
-    def setup
-        # no need for an items server
-    end
+  def setup
+    # no need for an items server
+  end
 
-    def teardown
-    end
+  def teardown
+  end
 
-    def test_0
+  def test_0
 
-        res = expect(
-            200,
-            nil,
-            get(:uri => "https://jmettraux.wordpress.com/2006/03/31/cvs-down/"))
+    res = expect(
+      200,
+      nil,
+      get(:uri => "https://jmettraux.wordpress.com/2006/03/31/cvs-down/"))
 
-        #res.each_header do |h|
-        #    p h
-        #end
+    #res.each_header do |h|
+    #  p h
+    #end
 
-        #puts res.body
-        assert res.body.match "^<!DOCTYPE html PUBLIC"
-    end
+    #puts res.body
+    assert res.body.match "^<!DOCTYPE html PUBLIC"
+  end
 end

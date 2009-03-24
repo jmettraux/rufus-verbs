@@ -1,7 +1,8 @@
 
 = rufus-verbs CHANGELOG.txt
 
-== rufus-verbs - 0.11   not yet released
+
+== rufus-verbs - 1.0.0   not yet released
 
 
 == rufus-verbs - 0.10   released 2008/05/28
