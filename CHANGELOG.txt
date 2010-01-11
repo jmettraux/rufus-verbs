@@ -4,6 +4,8 @@
 
 == rufus-verbs - 1.0.0   not yet released
 
+- bug : poor escaping of parameters (URI -> CGI) fixed, thanks nmaisonneuve
+
 
 == rufus-verbs - 0.10   released 2008/05/28
 

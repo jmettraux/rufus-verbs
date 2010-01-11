@@ -66,4 +66,18 @@ class DryRunTest < Test::Unit::TestCase
 
     assert_equal "/other?a=A&b=B", req.path
   end
+
+  def test_cgi_escape
+
+    ep = Rufus::Verbs::EndPoint.new(
+      :host => 'localhost',
+      :resource => 'whatever')
+
+    req = ep.post(
+      :dry_run => true,
+      :resource => 'other',
+      :query => { 'a' => 'A&A', 'b' => 'B?B' })
+
+    assert_equal "/other?a=A%26A&b=B%3FB", req.path
+  end
 end

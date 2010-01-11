@@ -23,6 +23,7 @@
 #++
 
 
+require 'cgi'
 require 'uri'
 require 'yaml' # for StringIO (at least for now)
 require 'net/http'
@@ -488,8 +489,10 @@ module Verbs
 
       h.entries.collect { |k, v|
         unless o(opts, :no_escape)
-          k = URI.escape k.to_s
-          v = URI.escape v.to_s
+          #k = URI.escape k.to_s
+          #v = URI.escape v.to_s
+          k = CGI.escape(k.to_s)
+          v = CGI.escape(v.to_s)
         end
         "#{k}=#{v}"
       }.join('&')
