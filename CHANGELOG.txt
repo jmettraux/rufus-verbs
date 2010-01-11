@@ -4,6 +4,7 @@
 
 == rufus-verbs - 1.0.0   not yet released
 
+- todo : upgraded to Rakefile, thanks Kenneth Kalmer
 - bug : poor escaping of parameters (URI -> CGI) fixed, thanks nmaisonneuve
 
 

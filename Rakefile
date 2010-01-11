@@ -1,106 +1,80 @@
 
+
+require 'lib/rufus/verbs/version.rb'
+
 require 'rubygems'
-
 require 'rake'
+
+
+#
+# CLEAN
+
 require 'rake/clean'
-require 'rake/packagetask'
-require 'rake/gempackagetask'
-require 'rake/testtask'
-
-#require 'rake/rdoctask'
-require 'hanna/rdoctask'
-
-gemspec = File.read('rufus-verbs.gemspec')
-eval "gemspec = #{gemspec}"
+CLEAN.include('pkg', 'tmp', 'html')
+task :default => [ :clean ]
 
 
 #
-# tasks
+# GEM
 
-CLEAN.include('pkg', 'html')
+require 'jeweler'
 
-task :default => [ :clean, :repackage ]
+Jeweler::Tasks.new do |gem|
 
+  gem.version = Rufus::Verbs::VERSION
+  gem.name = 'rufus-verbs'
+  gem.summary = 'GET, POST, PUT, DELETE, with something around'
 
-#
-# TESTING
+  gem.description = %{
+GET, POST, PUT, DELETE, with something around.
 
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'test'
-  t.test_files = FileList['test/test.rb']
-  t.verbose = true
+An HTTP client Ruby gem, with conditional GET, basic auth, and more.
+  }
+  gem.email = 'jmettraux@gmail.com'
+  gem.homepage = 'http://github.com/jmettraux/rufus-verbs/'
+  gem.authors = [ 'John Mettraux' ]
+  gem.rubyforge_project = 'rufus'
+
+  gem.test_file = 'test/test.rb'
+
+  gem.add_dependency 'rufus-lru'
+  gem.add_development_dependency 'yard', '>= 0'
+
+  # gemspec spec : http://www.rubygems.org/read/chapter/20
 end
+Jeweler::GemcutterTasks.new
 
 
 #
-# PACKAGING
+# DOC
 
-Rake::GemPackageTask.new(gemspec) do |pkg|
-  #pkg.need_tar = true
-end
+begin
 
-Rake::PackageTask.new('rufus-verbs', gemspec.version) do |pkg|
-  pkg.need_zip = true
-  pkg.package_files = FileList[
-    'Rakefile',
-    '*.txt',
-    'lib/**/*',
-    'test/**/*'
-  ].to_a
-  #pkg.package_files.delete("MISC.txt")
-  class << pkg
-    def package_name
-      "#{@name}-#{@version}-src"
-    end
+  require 'yard'
+
+  YARD::Rake::YardocTask.new do |doc|
+    doc.options = [
+      '-o', 'html/rufus-verbs', '--title',
+      "rufus-verbs #{Rufus::Verbs::VERSION}"
+    ]
+  end
+
+rescue LoadError
+
+  task :yard do
+    abort "YARD is not available : sudo gem install yard"
   end
 end
 
-#
-# VERSION
-
-task :change_version do
-
-  version = ARGV.pop
-  `sedip "s/VERSION = '.*'/VERSION = '#{version}'/" lib/rufus/verbs/version.rb`
-  `sedip "s/s.version = '.*'/s.version = '#{version}'/" rufus-verbs.gemspec`
-  exit 0 # prevent rake from triggering other tasks
-end
-
 
 #
-# DOCUMENTATION
+# TO THE WEB
 
-Rake::RDocTask.new do |rd|
-
-  rd.main = 'README.txt'
-  rd.rdoc_dir = 'html/rufus-verbs'
-  rd.rdoc_files.include(
-    'README.txt',
-    'CHANGELOG.txt',
-    'LICENSE.txt',
-    'CREDITS.txt',
-    'lib/**/*.rb')
-  rd.title = 'rufus-verbs rdoc'
-  rd.options << '-N' # line numbers
-  rd.options << '-S' # inline source
-end
-
-task :rrdoc => :rdoc do
-  FileUtils.cp('doc/rdoc-style.css', 'html/rufus-verbs/')
-end
-
-
-#
-# WEBSITE
-
-task :upload_website => [ :clean, :rrdoc ] do
+task :upload_website => [ :clean, :yard ] do
 
   account = 'jmettraux@rubyforge.org'
   webdir = '/var/www/gforge-projects/rufus'
 
   sh "rsync -azv -e ssh html/rufus-verbs #{account}:#{webdir}/"
-
-  sh "mv html/rufus-verbs html/rufus_verbs"
-  sh "rsync -azv -e ssh html/rufus_verbs #{account}:#{webdir}/"
 end
 
