@@ -38,7 +38,7 @@ maybe later :
 
 == getting it
 
-    sudo gem install -y rufus-verbs
+    gem install rufus-verbs
 
 or download[http://rubyforge.org/frs/?group_id=4812] it from RubyForge.
 
@@ -320,19 +320,19 @@ the gem rufus-lru[http://rufus.rubyforge.org/rufus-lru]
 
 On the Rufus-Ruby list[http://groups.google.com/group/rufus-ruby] :
 
-    http://groups.google.com/group/rufus-ruby
+  http://groups.google.com/group/rufus-ruby
 
 
 == issue tracker
 
-    http://rubyforge.org/tracker/?atid=18584&group_id=4812&func=browse
+  http://github.com/jmettraux/rufus-verbs/issues
 
 
 == source
 
 http://github.com/jmettraux/rufus-verbs
 
-    git clone git://github.com/jmettraux/rufus-verbs.git
+  git clone git://github.com/jmettraux/rufus-verbs.git
 
 
 == author
