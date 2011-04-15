@@ -270,11 +270,19 @@ module Verbs
       opts[:host] = r[1] || @opts[:host]
       opts[:port] = r[2] || @opts[:port]
       opts[:path] = r[3] || @opts[:path]
-
+      
+      # Merge EndPoint params and Request params
+      
+      def_params = @opts[:query] || @opts[:params]
+      req_params = opts[:query] || opts[:params]
+      
+      mer_params = def_params.merge req_params if def_params && req_params
+      
       opts[:query] =
         r[4] ||
-        opts[:params] || opts[:query] ||
-        @opts[:query] || @opts[:params] ||
+        mer_params ||
+        req_params ||
+        def_params ||
         {}
 
       opts.delete :path if opts[:path] == ''
