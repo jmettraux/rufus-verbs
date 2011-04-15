@@ -68,10 +68,19 @@ module Verbs
     # The endpoint initialization opts (Hash instance)
     #
     attr_reader :opts
+    
+    #
+    # Configure default parsers for this EndPoint, example:
+    # ep.parsers['application/json'] = Yajl::Parser
+    # ep.parsers['application/xhtml+xml'] = Nokogiri::HTML::Document
+    #
+    
+    attr_reader :parsers
 
     def initialize (opts)
 
       @opts = opts
+      @parsers = {}
 
       compute_target @opts
 
@@ -569,8 +578,10 @@ module Verbs
           #
           # following the redirection
       end
-
+      
       decompress res
+
+      parse_body res
 
       res
     end
@@ -635,6 +646,35 @@ module Verbs
         gz.close
       end
     end
+    
+    #
+    # Parses the response body if a parser in defined for it's content-type
+    #
+
+    def parse_body (res)
+      
+      content_type = res.header['content-type']
+      
+      if content_parser = self.parsers[content_type]
+      
+        class << res
+          attr_accessor :parsed_body
+        
+          alias :old_body :body
+
+          def body
+            parsed_body || old_body
+          end
+        end
+        
+        res.parsed_body = content_parser.send(:parse, res.body)
+        
+      end
+      
+      res
+      
+    end
+    
   end
 end
 end
