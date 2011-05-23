@@ -1,6 +1,12 @@
 
 = CREDITS.txt
 
+
+== contributors
+
+Dirk Geurs - https://github.com/Dirklectisch
+
+
 == Feedback
 
 Nicolas Maisonneuve : http://github.com/nmaisonneuve
