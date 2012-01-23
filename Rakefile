@@ -1,6 +1,6 @@
 
 
-require 'lib/rufus/verbs/version.rb'
+require './lib/rufus/verbs/version.rb'
 
 require 'rubygems'
 require 'rake'
