@@ -110,6 +110,8 @@ module Verbs
 
       op[:digest_authentication] = false
         # preventing an infinite loop
+      op[:body] = false
+        # we want to check the error code
 
       method = req.class.const_get(:METHOD).downcase.to_sym
       #method = :get
@@ -142,7 +144,7 @@ module Verbs
       user, pass = o(opts, :digest_authentication)
       realm = @challenge.realm || ""
       method = req.class.const_get(:METHOD)
-      path = opts[:path]
+      path = req.path
 
       a1 = if @challenge.algorithm == 'MD5-sess'
         h(h(user, realm, pass), @challenge.nonce, @cnonce)
