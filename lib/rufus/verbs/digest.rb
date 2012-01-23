@@ -142,7 +142,7 @@ module Verbs
       user, pass = o(opts, :digest_authentication)
       realm = @challenge.realm || ""
       method = req.class.const_get(:METHOD)
-      path = opts[:path]
+      path = req.path
 
       a1 = if @challenge.algorithm == 'MD5-sess'
         h(h(user, realm, pass), @challenge.nonce, @cnonce)
