@@ -110,6 +110,8 @@ module Verbs
 
       op[:digest_authentication] = false
         # preventing an infinite loop
+      op[:body] = false
+        # we want to check the error code
 
       method = req.class.const_get(:METHOD).downcase.to_sym
       #method = :get
