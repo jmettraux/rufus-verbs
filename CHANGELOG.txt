@@ -2,7 +2,12 @@
 = rufus-verbs CHANGELOG.txt
 
 
-== rufus-verbs - 1.0.0   not yet released
+== rufus-verbs - 1.0.1   not yet released
+
+- digest auth fix, thanks Pierre 'Catwell' Chapuis
+
+
+== rufus-verbs - 1.0.0   released 2010/01/10
 
 - Parses the response body if a parser in defined for its content-type (Dirk Geurs)
 - EndPoint params merge with Request params (Dirk Geurs)

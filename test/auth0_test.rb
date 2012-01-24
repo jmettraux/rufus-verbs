@@ -41,3 +41,4 @@ class Auth0Test < Test::Unit::TestCase
       :http_basic_authentication => [ "toto", "toto" ])
   end
 end
+

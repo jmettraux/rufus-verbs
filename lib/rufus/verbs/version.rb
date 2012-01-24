@@ -29,7 +29,7 @@ module Verbs
   #
   # The version of this rufus-verbs [gem]
   #
-  VERSION = '1.0.0'
+  VERSION = '1.0.1'
 end
 end
 
