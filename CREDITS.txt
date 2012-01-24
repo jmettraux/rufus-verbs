@@ -4,6 +4,7 @@
 
 == contributors
 
+Pierre 'Catwell' Chapuis - https://github.com/catwell
 Dirk Geurs - https://github.com/Dirklectisch
 
 
