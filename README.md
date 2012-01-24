@@ -1,7 +1,7 @@
 
-= 'rufus-verbs'
+# 'rufus-verbs'
 
-== what is it ?
+## what is it ?
 
 'rufus-verbs' is an extended HTTP client library (gem). It provides the four main HTTP "verbs" as Ruby methods : get, put, post and delete.
 
@@ -10,7 +10,7 @@ It wraps a certain number of techniques that make it a decent tool for manipulat
 Head and Options are supported as well.
 
 
-== features
+## features
 
 currently :
 
@@ -36,14 +36,14 @@ maybe later :
 * persistent cookie jar
 
 
-== getting it
+## getting it
 
     gem install rufus-verbs
 
 or download[http://rubyforge.org/frs/?group_id=4812] it from RubyForge.
 
 
-== usage
+## usage
 
 The arguments to the "verbs" follow the schema <tt>method_name(uri, opts)</tt> or <tt>method_name(opts)</tt>. Post and put accept an optional block parameter.
 
@@ -169,7 +169,7 @@ This fopen() method makes sure to return an object that has a read() method (lik
 The tests may provide good intel as on 'rufus-verbs' usage as well : http://rufus.rubyforge.org/svn/trunk/verbs/test/
 
 
-== the options
+## the options
 
 A list of options supported by rufus-verbs, in alphabetical order.
 
@@ -311,42 +311,42 @@ can be set to true or to an IO instance. If set to true, messages will be direct
 Will produces verbose messages similar to those of the fine cURL utility.
 
 
-== dependencies
+## dependencies
 
 the gem rufus-lru[http://rufus.rubyforge.org/rufus-lru]
 
 
-== mailing list
+## mailing list
 
 On the Rufus-Ruby list[http://groups.google.com/group/rufus-ruby] :
 
   http://groups.google.com/group/rufus-ruby
 
 
-== issue tracker
+## issue tracker
 
   http://github.com/jmettraux/rufus-verbs/issues
 
 
-== source
+## source
 
 http://github.com/jmettraux/rufus-verbs
 
   git clone git://github.com/jmettraux/rufus-verbs.git
 
 
-== author
+## author
 
 John Mettraux, jmettraux@gmail.com,
 http://jmettraux.wordpress.com
 
 
-== the rest of Rufus
+## the rest of Rufus
 
 http://rufus.rubyforge.org
 
 
-== license
+## license
 
 MIT
 
