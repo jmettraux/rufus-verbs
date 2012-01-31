@@ -2,7 +2,7 @@
 = rufus-verbs CHANGELOG.txt
 
 
-== rufus-verbs - 1.0.1   not yet released
+== rufus-verbs - 1.0.1   released 2012/02/01
 
 - digest auth fix, thanks Pierre 'Catwell' Chapuis
 
