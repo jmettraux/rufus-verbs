@@ -526,7 +526,7 @@ module Verbs
       if d
         req.body = d
       elsif fd
-        sep = opts[:fd_sep] #|| nil
+        sep = opts[:fd_sep] || '&'
         req.set_form_data fd, sep
       elsif block
         req.body = block.call req
