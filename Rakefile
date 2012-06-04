@@ -42,7 +42,7 @@ desc %{
 task :build do
 
   sh "gem build #{GEMSPEC_FILE}"
-  sh "mkdir pkg" rescue nil
+  sh "mkdir -p pkg" rescue nil
   sh "mv #{GEMSPEC.name}-#{GEMSPEC.version}.gem pkg/"
 end
 
