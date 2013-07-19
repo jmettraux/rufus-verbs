@@ -26,10 +26,9 @@
 module Rufus
 module Verbs
 
-  #
   # The version of this rufus-verbs [gem]
   #
-  VERSION = '1.0.1'
+  VERSION = '1.0.2'
 end
 end
 

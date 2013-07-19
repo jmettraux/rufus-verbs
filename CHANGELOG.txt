@@ -2,6 +2,11 @@
 = rufus-verbs CHANGELOG.txt
 
 
+== rufus-verbs - 1.0.2   not yet released
+
+- digest auth nonce reuse fix, thanks Pierre 'Catwell' Chapuis
+
+
 == rufus-verbs - 1.0.1   released 2012/02/01
 
 - digest auth fix, thanks Pierre 'Catwell' Chapuis
