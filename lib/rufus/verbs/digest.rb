@@ -48,8 +48,8 @@ module Verbs
       @cnonce ||= generate_cnonce
       @nonce_count ||= 0
 
-      mention_digest_auth(req, opts) \
-        and return
+      # mention_digest_auth(req, opts) \
+      #   and return
 
       mention_digest_auth(req, opts) \
         if request_challenge(req, opts)
