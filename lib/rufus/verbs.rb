@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'rufus/verbs/net_http_response'
 
 require 'rufus/verbs/endpoint'
 require 'rufus/verbs/conditional'

@@ -19,11 +19,31 @@ describe Rufus::Verbs do
 
   describe '.get' do
 
-    it 'works' do
+    it 'accepts the URI directly' do
 
-      r = Rufus::Verbs.get(:uri => "http://localhost:7777/items")
+      r = Rufus::Verbs.get('http://localhost:7777/items')
 
-      r.class.should == Net::HTTPOK
+      r.code.should == '200'
+      r.body.should == "{}\n"
+      r.headers['content-length'].should == '3'
+    end
+
+    it 'accepts the URI via the :uri option' do
+
+      r = Rufus::Verbs.get(:uri => 'http://localhost:7777/items')
+
+      r.code.should == '200'
+      r.body.should == "{}\n"
+      r.headers['content-length'].should == '3'
+    end
+
+    it 'accepts the URI via the :u option' do
+
+      r = Rufus::Verbs.get(:u => 'http://localhost:7777/items')
+
+      r.code.should == '200'
+      r.body.should == "{}\n"
+      r.headers['content-length'].should == '3'
     end
   end
 end

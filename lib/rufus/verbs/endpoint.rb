@@ -26,7 +26,6 @@
 require 'cgi'
 require 'uri'
 require 'yaml' # for StringIO (at least for now)
-require 'net/http'
 require 'zlib'
 
 require 'rufus/verbs/version'

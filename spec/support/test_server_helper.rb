@@ -295,7 +295,12 @@ class ItemServer
   def initialize(args={})
 
     opts = { :Port => args[:port] || 7777 }
-    opts[:Logger] = WEBrick::Log.new('/dev/null') unless ENV['WLOG'] == 'true'
+
+    unless ENV['WLOG'] == 'true'
+      opts[:Logger] = WEBrick::Log.new('/dev/null')
+      opts[:AccessLog] = []
+    end
+      # by default, prevent WEBrick from logging
 
     @server = WEBrick::HTTPServer.new(opts)
 
