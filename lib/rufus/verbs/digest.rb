@@ -29,7 +29,6 @@ require 'digest/md5'
 module Rufus
 module Verbs
 
-  #
   # Specified by http://www.ietf.org/rfc/rfc2617.txt
   # Inspired by http://segment7.net/projects/ruby/snippets/digest_auth.rb
   #
@@ -37,10 +36,9 @@ module Verbs
   #
   module DigestAuthMixin
 
-    #
     # Makes sure digest_auth is on
     #
-    def digest_auth (req, opts)
+    def digest_auth(req, opts)
 
       #return if no_digest_auth
         # already done in add_authentication()
@@ -55,10 +53,9 @@ module Verbs
         if request_challenge(req, opts)
     end
 
-    #
     # Sets the 'Authorization' header with the appropriate info.
     #
-    def mention_digest_auth (req, opts)
+    def mention_digest_auth(req, opts)
 
       return false unless @challenge
 
@@ -67,11 +64,10 @@ module Verbs
       true
     end
 
-    #
     # Interprets the information in the response's 'Authorization-Info'
     # header.
     #
-    def check_authentication_info (res, opts)
+    def check_authentication_info(res, opts)
 
       return if no_digest_auth
         # not using digest authentication
@@ -85,7 +81,6 @@ module Verbs
 
     protected
 
-    #
     # Returns true if :digest_authentication is set at endpoint
     # or request level.
     #
@@ -94,7 +89,6 @@ module Verbs
       (not o(opts, :digest_authentication))
     end
 
-    #
     # To be enhanced.
     #
     # (For example http://www.intertwingly.net/blog/1585.html)
@@ -104,7 +98,7 @@ module Verbs
       Digest::MD5.hexdigest("%x" % (Time.now.to_i + rand(65535)))
     end
 
-    def request_challenge (req, opts)
+    def request_challenge(req, opts)
 
       op = opts.dup
 
@@ -125,24 +119,22 @@ module Verbs
       true
     end
 
-    #
     # Generates an MD5 digest of the arguments (joined by ":").
     #
-    def h (*args)
+    def h(*args)
 
       Digest::MD5.hexdigest(args.join(":"))
     end
 
-    #
     # Generates the Authentication header that will be returned
     # to the server.
     #
-    def generate_header (req, opts)
+    def generate_header(req, opts)
 
       @nonce_count += 1
 
       user, pass = o(opts, :digest_authentication)
-      realm = @challenge.realm || ""
+      realm = @challenge.realm || ''
       method = req.class.const_get(:METHOD)
       path = req.path
 
@@ -187,7 +179,7 @@ module Verbs
     #
     class ServerReply
 
-      def initialize (res)
+      def initialize(res)
 
         s = res[header_name]
         return nil unless s
@@ -214,7 +206,7 @@ module Verbs
 
       protected
 
-      def parse_entry (e)
+      def parse_entry(e)
 
         k, v = e.split '=', 2
         v = v[1..-2] if v[0, 1] == '"'
@@ -227,10 +219,10 @@ module Verbs
     #
     class Challenge < ServerReply
 
-      attr_accessor \
-        :opaque, :algorithm, :qop, :stale, :nonce, :realm, :charset
+      attr_accessor :opaque, :algorithm, :qop, :stale, :nonce, :realm, :charset
 
       def header_name
+
         'www-authenticate'
       end
     end
@@ -240,15 +232,14 @@ module Verbs
     #
     class AuthInfo < ServerReply
 
-      attr_accessor \
-        :cnonce, :rspauth, :nextnonce, :qop, :nc
+      attr_accessor :cnonce, :rspauth, :nextnonce, :qop, :nc
 
       def header_name
+
         'authentication-info'
       end
     end
   end
-
 end
 end
 

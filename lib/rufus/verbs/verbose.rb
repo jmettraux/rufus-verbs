@@ -33,22 +33,20 @@ module Verbs
 
     protected
 
-    #
     # logs a unique message to the verbose channel (if any).
     #
-    def vlog (opts, msg)
+    def vlog(opts, msg)
 
-      channel = get_channel(opts) or return
+      channel = get_channel(opts) || return
 
       channel << msg
     end
 
-    #
     # logs the outgoing request
     #
-    def vlog_request (opts, req)
+    def vlog_request(opts, req)
 
-      channel = get_channel(opts) or return
+      channel = get_channel(opts) || return
 
       channel << "> #{req.method} #{req.path}\n"
 
@@ -59,20 +57,19 @@ module Verbs
       channel << ">\n"
     end
 
-    def vlog_http (opts, http)
+    def vlog_http(opts, http)
 
-      channel = get_channel(opts) or return
+      channel = get_channel(opts) || return
 
       channel << "* #{http.address}:#{http.port}\n"
       channel << "*\n"
     end
 
-    #
     # logs the incoming response
     #
-    def vlog_response (opts, res)
+    def vlog_response(opts, res)
 
-      channel = get_channel(opts) or return
+      channel = get_channel(opts) || return
 
       channel << "< #{res.code} #{res.message}\n"
       channel << "<\n"
@@ -86,11 +83,11 @@ module Verbs
 
     private
 
-    def get_channel (opts)
+    def get_channel(opts)
 
       v = o(opts, [ :verbose, :v ])
 
-      return nil if (not v) or (v.to_s == 'false')
+      return nil if (not v) || (v.to_s == 'false')
 
       v = $stdout if v.to_s == 'true'
 
@@ -99,7 +96,6 @@ module Verbs
       v
     end
   end
-
 end
 end
 

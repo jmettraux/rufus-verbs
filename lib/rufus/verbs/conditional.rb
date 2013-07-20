@@ -49,7 +49,7 @@ module Rufus::Verbs
   #
   class ConditionalEndPoint < EndPoint
 
-    def initialize (opts)
+    def initialize(opts)
 
       super
 
@@ -58,7 +58,6 @@ module Rufus::Verbs
       @cache = LruHash.new cs
     end
 
-    #
     # Returns the count of representation 'cached' here for the
     # purpose of conditional GET requests.
     #
@@ -67,7 +66,6 @@ module Rufus::Verbs
       @cache.size
     end
 
-    #
     # Returns the max size of the conditional GET cache.
     #
     def cache_size
@@ -77,11 +75,10 @@ module Rufus::Verbs
 
     private
 
-    #
     # If the representation has already been gotten, send
     # potential If-Modified-Since and/or If-None-Match.
     #
-    def add_conditional_headers (req, opts)
+    def add_conditional_headers(req, opts)
 
       # if path is cached send since and/or match
 
@@ -95,7 +92,7 @@ module Rufus::Verbs
       opts[:c_cached] = e
     end
 
-    def handle_response (method, res, opts)
+    def handle_response(method, res, opts)
 
       # if method is get and reply is 200, cache (if et and/or lm)
       # if method is get and reply is 304, return from cache
@@ -111,7 +108,7 @@ module Rufus::Verbs
       res
     end
 
-    def cache (res, opts)
+    def cache(res, opts)
 
       class << res
         def lastmod

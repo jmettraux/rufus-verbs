@@ -64,20 +64,19 @@ module Verbs
     include DigestAuthMixin
     include VerboseMixin
 
-    #
     # The endpoint initialization opts (Hash instance)
     #
     attr_reader :opts
-    
+
     #
     # Configure default parsers for this EndPoint, example:
     # ep.parsers['application/json'] = Yajl::Parser
     # ep.parsers['application/xhtml+xml'] = Nokogiri::HTML::Document
     #
-    
+
     attr_reader :parsers
 
-    def initialize (opts)
+    def initialize(opts)
 
       @opts = opts
       @parsers = {}
@@ -94,37 +93,36 @@ module Verbs
       prepare_cookie_jar
     end
 
-    def get (*args)
+    def get(*args)
 
       request :get, args
     end
 
-    def post (*args, &block)
+    def post(*args, &block)
 
       request :post, args, &block
     end
 
-    def put (*args, &block)
+    def put(*args, &block)
 
       request :put, args, &block
     end
 
-    def delete (*args)
+    def delete(*args)
 
       request :delete, args
     end
 
-    def head (*args)
+    def head(*args)
 
       request :head, args
     end
 
-    def options (*args)
+    def options(*args)
 
       request :options, args
     end
 
-    #
     # This is the method called by the module methods verbs.
     #
     # For example,
@@ -135,18 +133,17 @@ module Verbs
     #
     #   RufusVerbs::EndPoint.request(:get, args)
     #
-    def self.request (method, args, &block)
+    def self.request(method, args, &block)
 
       opts = extract_opts args
 
       EndPoint.new(opts).request(method, opts, &block)
     end
 
-    #
     # The instance methods get, post, put and delete ultimately calls
     # this request() method. All the work is done here.
     #
-    def request (method, args, &block)
+    def request(method, args, &block)
 
       # prepare request
 
@@ -212,7 +209,6 @@ module Verbs
 
     private
 
-    #
     # Manages various args formats :
     #
     #   uri
@@ -220,7 +216,7 @@ module Verbs
     #   [ uri, opts ]
     #   opts
     #
-    def self.extract_opts (args)
+    def self.extract_opts(args)
 
       opts = {}
 
@@ -235,22 +231,20 @@ module Verbs
       opts
     end
 
-    #
     # Returns the value from the [request] opts or from the
     # [endpoint] @opts.
     #
-    def o (opts, key)
+    def o(opts, key)
 
-      keys = Array key
+      keys = Array(key)
       keys.each { |k| (v = opts[k]; return v if v != nil) }
       keys.each { |k| (v = @opts[k]; return v if v != nil) }
       nil
     end
 
-    #
     # Returns scheme, host, port, path, query
     #
-    def compute_target (opts)
+    def compute_target(opts)
 
       u = opts[:uri] || opts[:u]
 
@@ -270,6 +264,7 @@ module Verbs
           u.port,
           u.path,
           query_to_h(u.query) ]
+
       else
 
         []
@@ -279,14 +274,14 @@ module Verbs
       opts[:host] = r[1] || @opts[:host]
       opts[:port] = r[2] || @opts[:port]
       opts[:path] = r[3] || @opts[:path]
-      
+
       # Merge EndPoint params and Request params
-      
+
       def_params = @opts[:query] || @opts[:params]
       req_params = opts[:query] || opts[:params]
-      
+
       mer_params = def_params.merge req_params if def_params && req_params
-      
+
       opts[:query] =
         r[4] ||
         mer_params ||
@@ -301,14 +296,14 @@ module Verbs
         opts[:host],
         opts[:port],
         opts[:path],
-        opts[:query] ].inspect
+        opts[:query]
+      ].inspect
           #
           # can be used for conditional gets
 
       r
     end
 
-    #
     # Creates the Net::HTTP request instance.
     #
     # If :fake_put is set, will use Net::HTTP::Post
@@ -318,10 +313,9 @@ module Verbs
     # This call will also advertise this rufus-verbs as
     # 'accepting the gzip encoding' (in case of GET).
     #
-    def create_request (method, opts)
+    def create_request(method, opts)
 
-      if (o(opts, :fake_put) and
-        (method == :put or method == :delete))
+      if (o(opts, :fake_put) && (method == :put or method == :delete))
 
         opts[:query][:_method] = method.to_s
         method = :post
@@ -343,49 +337,46 @@ module Verbs
       r
     end
 
-    #
     # If @user and @pass are set, will activate basic authentication.
     # Else if the @auth option is set, will assume it contains a Proc
     # and will call it (with the request as a parameter).
     #
     # This comment is too much... Just read the code...
     #
-    def add_authentication (req, opts)
+    def add_authentication(req, opts)
 
       b = o(opts, :http_basic_authentication)
       d = o(opts, :digest_authentication)
       o = o(opts, :auth)
 
-      if b and b != false
+      if b && b != false
 
-        req.basic_auth b[0], b[1]
+        req.basic_auth(b[0], b[1])
 
-      elsif d and d != false
+      elsif d && d != false
 
-        digest_auth req, opts
+        digest_auth(req, opts)
 
-      elsif o and o != false
+      elsif o && o != false
 
-        o.call req
+        o.call(req)
       end
     end
 
-    #
     # In that base class, it's empty.
     # It's implemented in ConditionalEndPoint.
     #
     # Only called for a GET.
     #
-    def add_conditional_headers (req, opts)
+    def add_conditional_headers(req, opts)
 
       # nada
     end
 
-    #
     # Prepares a Net::HTTP instance, with potentially some
     # https settings.
     #
-    def prepare_http (opts)
+    def prepare_http(opts)
 
       compute_proxy opts
 
@@ -417,11 +408,10 @@ module Verbs
       http
     end
 
-    #
     # Sets both the open_timeout and the read_timeout for the http
     # instance
     #
-    def set_timeout (http, opts)
+    def set_timeout(http, opts)
 
       to = o(opts, :timeout) || o(opts, :to)
       to = to.to_i
@@ -432,18 +422,17 @@ module Verbs
       http.read_timeout = to
     end
 
-    #
     # Makes sure the request opts hold the proxy information.
     #
     # If the option :proxy is set to false, no proxy will be used.
     #
-    def compute_proxy (opts)
+    def compute_proxy(opts)
 
       p = o(opts, :proxy)
 
       return unless p
 
-      u = URI.parse p.to_s
+      u = URI.parse(p.to_s)
 
       raise "not an HTTP[S] proxy '#{u.host}'" \
         unless u.scheme.match(/^http/)
@@ -454,7 +443,6 @@ module Verbs
       opts[:proxy_pass] = u.password
     end
 
-    #
     # Determines the full path of the request (path_info and
     # query_string).
     #
@@ -462,7 +450,7 @@ module Verbs
     #
     #   /items/4?style=whatever&maxcount=12
     #
-    def compute_path (opts)
+    def compute_path(opts)
 
       b = o(opts, :base)
       r = o(opts, [ :res, :resource ])
@@ -485,10 +473,9 @@ module Verbs
       path + '?' + h_to_query(query, opts)
     end
 
-    #
     #   "a=A&b=B" -> { "a" => "A", "b" => "B" }
     #
-    def query_to_h (q)
+    def query_to_h(q)
 
       return nil unless q
 
@@ -499,10 +486,9 @@ module Verbs
       end
     end
 
-    #
     #   { "a" => "A", "b" => "B" } -> "a=A&b=B"
     #
-    def h_to_query (h, opts)
+    def h_to_query(h, opts)
 
       h.entries.collect { |k, v|
         unless o(opts, :no_escape)
@@ -515,10 +501,9 @@ module Verbs
       }.join('&')
     end
 
-    #
     # Fills the request body (with the content of :d or :fd).
     #
-    def add_payload (req, opts, &block)
+    def add_payload(req, opts, &block)
 
       d = opts[:d] || opts[:data]
       fd = opts[:fd] || opts[:form_data]
@@ -535,14 +520,13 @@ module Verbs
       end
     end
 
-    #
     # Handles the server response.
     # Eventually follows redirections.
     #
     # Once the final response has been hit, will make sure
     # it's decompressed.
     #
-    def handle_response (method, res, opts)
+    def handle_response(method, res, opts)
 
       nored = o(opts, [ :no_redirections, :noredir ])
 
@@ -586,7 +570,7 @@ module Verbs
           #
           # following the redirection
       end
-      
+
       decompress res
 
       parse_body res
@@ -594,7 +578,6 @@ module Verbs
       res
     end
 
-    #
     # Returns an array of symbols, like for example
     #
     #   [ :get, :post ]
@@ -604,30 +587,26 @@ module Verbs
     # This method is used to provide the result of an OPTIONS
     # HTTP method.
     #
-    def parse_options (res)
+    def parse_options(res)
 
       s = res['Allow']
 
       return [] unless s
 
-      s.split(',').collect do |m|
-        m.strip.downcase.to_sym
-      end
+      s.split(',').collect { |m| m.strip.downcase.to_sym }
     end
 
-    #
     # Returns true if the current request has authentication
     # going on.
     #
-    def authentication_is_on? (opts)
+    def authentication_is_on?(opts)
 
       (o(opts, [ :http_basic_authentication, :hba, :auth ]) != nil)
     end
 
-    #
     # Inflates the response body if necessary.
     #
-    def decompress (res)
+    def decompress(res)
 
       if res['content-encoding'] == 'gzip'
 
@@ -649,40 +628,36 @@ module Verbs
         # now deflate...
 
         io = StringIO.new res.body
-        gz = Zlib::GzipReader.new io
+        gz = Zlib::GzipReader.new(io)
         res.deflated_body = gz.read
         gz.close
       end
     end
-    
-    #
-    # Parses the response body if a parser in defined for it's content-type
-    #
 
-    def parse_body (res)
-      
+    # Parses the response body if a parser in defined for its content-type
+    #
+    def parse_body(res)
+
       content_type = res.header['content-type']
-      
+
       if content_parser = self.parsers[content_type]
-      
+
         class << res
+
           attr_accessor :parsed_body
-        
+
           alias :old_body :body
 
           def body
             parsed_body || old_body
           end
         end
-        
+
         res.parsed_body = content_parser.send(:parse, res.body)
-        
       end
-      
+
       res
-      
     end
-    
   end
 end
 end

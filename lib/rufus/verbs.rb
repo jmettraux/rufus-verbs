@@ -29,63 +29,55 @@ require 'rufus/verbs/conditional'
 
 module Rufus::Verbs
 
-
-  #
   # GET
   #
-  def get (*args)
+  def get(*args)
 
     EndPoint.request :get, args
   end
 
-  #
   # POST
   #
-  def post (*args, &block)
+  def post(*args, &block)
 
     EndPoint.request :post, args, &block
   end
 
-  #
   # PUT
   #
-  def put (*args, &block)
+  def put(*args, &block)
 
     EndPoint.request :put, args, &block
   end
 
-  #
   # DELETE
   #
-  def delete (*args)
+  def delete(*args)
 
     EndPoint.request :delete, args
   end
 
-  #
   # HEAD
   #
-  def head (*args)
+  def head(*args)
 
     EndPoint.request :head, args
   end
 
-  #
   # OPTIONS
   #
-  def options (*args)
+  def options(*args)
 
     EndPoint.request :options, args
   end
 
-  #
   # Opens a file or a URI (GETs it and return the reply). Will tolerate
   # a HTTP[S] URI or a file path.
   #
   # It is not named open() in order not to collide with File.open and
   # open-uri's open.
   #
-  def fopen (uri, *args, &block)
+  def fopen(uri, *args, &block)
 
     # should I really care about blocks here ? ...
 

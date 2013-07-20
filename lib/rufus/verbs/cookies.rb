@@ -38,14 +38,12 @@ module Verbs
   #
   module CookieMixin
 
-    #
     # making the cookie jar available
     #
     attr_reader :cookies
 
     protected
 
-    #
     # Prepares the instance variable @cookies for storing
     # cooking for this endpoint.
     #
@@ -64,24 +62,22 @@ module Verbs
       @cookies = CookieJar.new s
     end
 
-    #
     # Parses the HTTP response for a potential 'Set-Cookie' header,
     # parses and returns it as a hash.
     #
-    def parse_cookies (response)
+    def parse_cookies(response)
 
       c = response['Set-Cookie']
       return nil unless c
       Cookie.parse_set_cookies c
     end
 
-    #
     # (This method will have no effect if the EndPoint is not
     # tracking cookies)
     #
     # Registers a potential cookie set by the server.
     #
-    def register_cookies (response, opts)
+    def register_cookies(response, opts)
 
       return unless @cookies
 
@@ -110,11 +106,10 @@ module Verbs
       end
     end
 
-    #
     # Checks if the cookie is acceptable in the context of
     # the request that sent it.
     #
-    def cookie_acceptable? (opts, response, cookie)
+    def cookie_acceptable?(opts, response, cookie)
 
       # reject if :
       #
@@ -149,13 +144,12 @@ module Verbs
       true
     end
 
-    #
     # Places the 'Cookie' header in the request if appropriate.
     #
     # (This method will have no effect if the EndPoint is not
     # tracking cookies)
     #
-    def mention_cookies (request, opts)
+    def mention_cookies(request, opts)
 
       return unless @cookies
 
@@ -165,7 +159,6 @@ module Verbs
     end
   end
 
-  #
   # An extension of the cookie implementation found in WEBrick.
   #
   # Unmodified for now.
@@ -184,7 +177,6 @@ module Verbs
     end
   end
 
-  #
   # Cookies are stored by domain, they via this CookieKey which gathers
   # path and name of the cookie.
   #
@@ -192,16 +184,15 @@ module Verbs
 
     attr_reader :name, :path
 
-    def initialize (path, cookie)
+    def initialize(path, cookie)
 
       @name = cookie.name
       @path = path || cookie.path
     end
 
-    #
     # longer paths first
     #
-    def <=> (other)
+    def <=>(other)
 
       -1 * (@path <=> other.path)
     end
@@ -210,7 +201,7 @@ module Verbs
       "#{@name}|#{@path}".hash
     end
 
-    def == (other)
+    def ==(other)
       (@path == other.path and @name == other.name)
     end
 
@@ -224,13 +215,11 @@ module Verbs
   #
   module HostMixin
 
-    #
     # Matching a classical IP address (not a v6 though).
     # Should be sufficient for now.
     #
     IP_REGEX = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
 
-    #
     # Returns a pair host/domain, note that the domain starts with a dot.
     #
     #   split_host('localhost') --> [ 'localhost', nil ]
@@ -238,7 +227,7 @@ module Verbs
     #   split_host('127.0.0.1') --> [ '127.0.0.1', nil ]
     #   split_host('::1') --> [ '::1', nil ]
     #
-    def split_host (host)
+    def split_host(host)
 
       return [ host, nil ] if IP_REGEX.match host
       i = host.index('.')
@@ -254,12 +243,11 @@ module Verbs
   class CookieJar
     include HostMixin
 
-    def initialize (jar_size)
+    def initialize(jar_size)
 
       @per_domain = LruHash.new jar_size
     end
 
-    #
     # Returns the count of cookies currently stored in this jar.
     #
     def size
@@ -267,24 +255,23 @@ module Verbs
       @per_domain.keys.inject(0) { |i, d| i + @per_domain[d].size }
     end
 
-    def add_cookie (domain, path, cookie)
+    def add_cookie(domain, path, cookie)
 
       (@per_domain[domain] ||= {})[CookieKey.new(path, cookie)] = cookie
     end
 
-    def remove_cookie (domain, path, cookie)
+    def remove_cookie(domain, path, cookie)
 
       (d = @per_domain[domain])
       return unless d
       d.delete CookieKey.new(path, cookie)
     end
 
-    #
     # Retrieves the cookies that matches the combination host/path.
     # If the retrieved cookie is expired, will remove it from the jar
     # and return nil.
     #
-    def fetch_cookies (host, path)
+    def fetch_cookies(host, path)
 
       c = do_fetch(@per_domain[host], path)
 
@@ -296,10 +283,9 @@ module Verbs
 
     private
 
-    #
     # Returns all the cookies that match a domain (host) and a path.
     #
-    def do_fetch (dh, path)
+    def do_fetch(dh, path)
 
       return [] unless dh
 
