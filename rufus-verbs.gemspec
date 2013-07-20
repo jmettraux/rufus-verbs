@@ -33,6 +33,7 @@ A HTTP client Ruby gem, with conditional GET, basic auth, and more.
   s.add_runtime_dependency 'rufus-lru'
 
   s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec', '>= 2.13.0'
 
   s.require_path = 'lib'
 end
