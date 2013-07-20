@@ -1,9 +1,9 @@
 
 [ ] Travis CI
-[ ] get rid of doc/*.css
+[o] get rid of doc/*.css
 
 [ ] enhance nonce generation: http://www.intertwingly.net/blog/1585.html
 
 [ ] stop using response class re-opening to add methods (cache, etc)
-    re-open Net::HTTPOK and co instead
+    re-open Net::HTTPOK and co instead (once for all, at the beginning)
 
