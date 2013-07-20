@@ -294,13 +294,10 @@ class ItemServer
 
   def initialize(args={})
 
-    #al = [
-    #  [ "", WEBrick::AccessLog::COMMON_LOG_FORMAT ],
-    #  [ "", WEBrick::AccessLog::REFERER_LOG_FORMAT ]]
+    opts = { :Port => args[:port] || 7777 }
+    opts[:Logger] = WEBrick::Log.new('/dev/null') unless ENV['WLOG'] == 'true'
 
-    @server = WEBrick::HTTPServer.new(
-      :Port => args[:port] || 7777,
-      :AccessLog => nil)
+    @server = WEBrick::HTTPServer.new(opts)
 
     class << @server
       attr_accessor :auth
