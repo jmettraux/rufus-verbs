@@ -25,7 +25,7 @@ describe Rufus::Verbs do
 
       r.code.should == '200'
       r.body.should == "{}\n"
-      r.headers['content-length'].should == '3'
+      r['Content-Length'].should == '3'
     end
 
     it 'accepts the URI via the :uri option' do
@@ -34,7 +34,7 @@ describe Rufus::Verbs do
 
       r.code.should == '200'
       r.body.should == "{}\n"
-      r.headers['content-length'].should == '3'
+      r['Content-Length'].should == '3'
     end
 
     it 'accepts the URI via the :u option' do
@@ -43,7 +43,62 @@ describe Rufus::Verbs do
 
       r.code.should == '200'
       r.body.should == "{}\n"
-      r.headers['content-length'].should == '3'
+      r['Content-Length'].should == '3'
+    end
+
+    it 'accepts a :host/:port/:path combination' do
+
+      r = Rufus::Verbs.get(
+        :host => 'localhost', :port => 7777, :path => '/items')
+
+      r.code.should == '200'
+      r.body.should == "{}\n"
+      r['Content-Length'].should == '3'
+    end
+  end
+
+  describe '.post' do
+
+    it 'posts data to a URI' do
+
+      r = Rufus::Verbs.post('http://localhost:7777/items', :d => 'Toto')
+
+      r.code.should == '201'
+      r['Location'].should == 'http://localhost:7777/items/0'
+
+      r = Rufus::Verbs.get('http://localhost:7777/items/0')
+      r.body.should == "\"Toto\"\n"
+    end
+  end
+
+  describe '.put' do
+
+    before(:each) do
+      Rufus::Verbs.post('http://localhost:7777/items', :d => 'Toto')
+    end
+
+    it 'puts data to a URI' do
+
+      r = Rufus::Verbs.put('http://localhost:7777/items/0', :d => 'Toto2')
+
+      r.code.should == '200'
+
+      r = Rufus::Verbs.get('http://localhost:7777/items/0')
+      r.body.should == "\"Toto2\"\n"
+    end
+
+    context ':fake_put => true' do
+
+      it 'uses POST behind the scenes' do
+
+        r = Rufus::Verbs.put(
+          'http://localhost:7777/items/0', :fake_put => true, :d => 'Maurice')
+
+        r.code.should == '200'
+
+        r = Rufus::Verbs.get('http://localhost:7777/items')
+        r.body.should == "{0=>\"Maurice\"}\n"
+      end
     end
   end
 end

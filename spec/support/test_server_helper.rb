@@ -168,6 +168,7 @@ class ItemServlet < WEBrick::HTTPServlet::AbstractServlet
   def self.flush
 
     @@items.clear
+    @@last_item_id = -1
     @@lastmod.clear
   end
 
