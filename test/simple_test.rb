@@ -95,8 +95,6 @@ class SimpleTest < Test::Unit::TestCase
     assert_kind_of Net::HTTPOK, r
   end
 
-#
-
   #
   # HEAD
   #
@@ -106,6 +104,8 @@ class SimpleTest < Test::Unit::TestCase
     assert_equal 200, res.code.to_i
     assert_nil res.body
   end
+
+#
 
   #
   # OPTIONS

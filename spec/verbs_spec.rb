@@ -145,5 +145,16 @@ describe Rufus::Verbs do
       end
     end
   end
+
+  describe '.head' do
+
+    it 'behaves like .get but does not fetch the body' do
+
+      r = Rufus::Verbs.head('http://localhost:7777/items')
+
+      r.code.should == '200'
+      r.body.should == nil
+    end
+  end
 end
 
