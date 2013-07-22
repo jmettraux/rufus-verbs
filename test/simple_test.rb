@@ -44,8 +44,6 @@ class SimpleTest < Test::Unit::TestCase
     expect 200, { 0 => "Toto3" }, get(:uri => "http://localhost:7777/items")
   end
 
-#
-
   def test_0b
 
     expect 200, {}, get(:uri => "http://localhost:7777/items")
@@ -81,6 +79,8 @@ class SimpleTest < Test::Unit::TestCase
 
     expect 200, { 0 => "blockdata" }, ep.get(:res => "items")
   end
+
+#
 
   def test_2
 

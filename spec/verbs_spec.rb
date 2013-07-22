@@ -69,6 +69,20 @@ describe Rufus::Verbs do
       r = Rufus::Verbs.get('http://localhost:7777/items/0')
       r.body.should == "\"Toto\"\n"
     end
+
+    it 'accepts a block returning the data to post' do
+
+      r =
+        Rufus::Verbs.post('http://localhost:7777/items') do
+          "nada" * 3
+        end
+
+      r.code.should == '201'
+      r['Location'].should == 'http://localhost:7777/items/0'
+
+      r = Rufus::Verbs.get('http://localhost:7777/items/0')
+      r.body.should == "\"nadanadanada\"\n"
+    end
   end
 
   describe '.put' do
@@ -85,6 +99,19 @@ describe Rufus::Verbs do
 
       r = Rufus::Verbs.get('http://localhost:7777/items/0')
       r.body.should == "\"Toto2\"\n"
+    end
+
+    it 'accepts a block returning the data to put' do
+
+      r =
+        Rufus::Verbs.put('http://localhost:7777/items/0') do
+          'xxx'
+        end
+
+      r.code.should == '200'
+
+      r = Rufus::Verbs.get('http://localhost:7777/items/0')
+      r.body.should == "\"xxx\"\n"
     end
 
     context ':fake_put => true' do
