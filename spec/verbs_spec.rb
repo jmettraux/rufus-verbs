@@ -62,6 +62,16 @@ describe Rufus::Verbs do
 
       r.class.should == Net::HTTPOK
     end
+
+    context ':body => true' do
+
+      it 'returns the body directly (not the HTTPResponse)' do
+
+        r = Rufus::Verbs.get('http://localhost:7777/items', :body => true)
+
+        r.should == "{}\n"
+      end
+    end
   end
 
   describe '.post' do

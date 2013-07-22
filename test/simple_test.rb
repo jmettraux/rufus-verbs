@@ -80,8 +80,6 @@ class SimpleTest < Test::Unit::TestCase
     expect 200, { 0 => "blockdata" }, ep.get(:res => "items")
   end
 
-#
-
   def test_2
 
     s = get(:uri => "http://localhost:7777/items", :body => true)
@@ -96,6 +94,8 @@ class SimpleTest < Test::Unit::TestCase
     r = get "http://rufus.rubyforge.org"
     assert_kind_of Net::HTTPOK, r
   end
+
+#
 
   #
   # HEAD
