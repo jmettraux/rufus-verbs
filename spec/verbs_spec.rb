@@ -55,6 +55,13 @@ describe Rufus::Verbs do
       r.body.should == "{}\n"
       r['Content-Length'].should == '3'
     end
+
+    it 'is ok with a URI without a path' do
+
+      r = Rufus::Verbs.get('http://rufus.rubyforge.org')
+
+      r.class.should == Net::HTTPOK
+    end
   end
 
   describe '.post' do
