@@ -156,5 +156,14 @@ describe Rufus::Verbs do
       r.body.should == nil
     end
   end
+
+  describe '.options' do
+
+    it 'lists the HTTP methods the endpoint responds to' do
+
+      r = Rufus::Verbs.options('http://localhost:7777/items')
+      r.should == [ :delete, :get, :head, :options, :post, :put ]
+    end
+  end
 end
 

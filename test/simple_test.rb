@@ -105,20 +105,18 @@ class SimpleTest < Test::Unit::TestCase
     assert_nil res.body
   end
 
-#
-
   #
   # OPTIONS
   #
   def test_5
 
     r = options "http://localhost:7777/items"
-    assert_equal [ :delete, :get, :head, :options, :post, :put], r
+    assert_equal [ :delete, :get, :head, :options, :post, :put ], r
   end
 
   def test_6
 
     r = Rufus::Verbs::options "http://localhost:7777/items"
-    assert_equal [ :delete, :get, :head, :options, :post, :put], r
+    assert_equal [ :delete, :get, :head, :options, :post, :put ], r
   end
 end
