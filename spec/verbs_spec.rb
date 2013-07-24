@@ -95,6 +95,33 @@ describe Rufus::Verbs do
         (Time.now - t).should < 2
       end
     end
+
+    context 'redirections' do
+
+      it 'follows redirections by default' do
+
+        r = Rufus::Verbs.get('http://localhost:7777/things')
+
+        r.code.should == '200'
+        r.body.should == "{}\n"
+      end
+
+      it 'accepts a :no_redirections => true option' do
+
+        r = Rufus::Verbs.get(
+          'http://localhost:7777/things', :no_redirections => true)
+
+        r.code.should == '303'
+      end
+
+      it 'accepts a :noredir => true option' do
+
+        r = Rufus::Verbs.get(
+          'http://localhost:7777/things', :noredir => true)
+
+        r.code.should == '303'
+      end
+    end
   end
 
   describe '.post' do
