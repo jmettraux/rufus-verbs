@@ -46,6 +46,15 @@ describe Rufus::Verbs do
       r['Content-Length'].should == '3'
     end
 
+    it 'accepts a URI::HTTP instance' do
+
+      r = Rufus::Verbs.get(URI.parse('http://localhost:7777/items'))
+
+      r.code.should == '200'
+      r.body.should == "{}\n"
+      r['Content-Length'].should == '3'
+    end
+
     it 'accepts a :host/:port/:path combination' do
 
       r = Rufus::Verbs.get(
