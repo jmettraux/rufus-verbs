@@ -72,6 +72,20 @@ describe Rufus::Verbs do
         r.should == "{}\n"
       end
     end
+
+    context ':timeout => seconds' do
+
+      it 'times out after the given time' do
+
+        t = Time.now
+
+        lambda {
+          Rufus::Verbs.get 'http://localhost:7777/lost', :to => 1
+        }.should raise_error(Timeout::Error)
+
+        (Time.now - t).should < 2
+      end
+    end
   end
 
   describe '.post' do
