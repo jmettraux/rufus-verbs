@@ -54,12 +54,12 @@ module Verbs
 
       o = @opts[:cookies]
 
-      return unless o and o != false
+      return unless o
 
       s = o.to_s.to_i
       s = 77 if s < 1
 
-      @cookies = CookieJar.new s
+      @cookies = CookieJar.new(s)
     end
 
     # Parses the HTTP response for a potential 'Set-Cookie' header,
@@ -68,8 +68,8 @@ module Verbs
     def parse_cookies(response)
 
       c = response['Set-Cookie']
-      return nil unless c
-      Cookie.parse_set_cookies c
+
+      c ? Cookie.parse_set_cookies(c) : nil
     end
 
     # (This method will have no effect if the EndPoint is not
@@ -81,7 +81,7 @@ module Verbs
 
       return unless @cookies
 
-      cs = parse_cookies response
+      cs = parse_cookies(response)
 
       return unless cs
 
@@ -99,9 +99,9 @@ module Verbs
         domain = c.domain || host
 
         if c.max_age == 0
-          @cookies.remove_cookie domain, path, c
+          @cookies.remove_cookie(domain, path, c)
         else
-          @cookies.add_cookie domain, path, c
+          @cookies.add_cookie(domain, path, c)
         end
       end
     end
@@ -127,7 +127,7 @@ module Verbs
 
       if cdomain
 
-        return false unless cdomain.index '.'
+        return false unless cdomain.index('.')
         return false if cdomain[0, 1] != '.'
 
         h, d = split_host(opts[:host])
@@ -137,7 +137,7 @@ module Verbs
       #path = opts[:path]
       path = response.request.path
 
-      cpath = cookie.path || "/"
+      cpath = cookie.path || '/'
 
       return false if path[0..cpath.length-1] != cpath
 
@@ -155,7 +155,7 @@ module Verbs
 
       cs = @cookies.fetch_cookies opts[:host], opts[:path]
 
-      request['Cookie'] = cs.collect { |c| c.to_header_s }.join(",")
+      request['Cookie'] = cs.collect { |c| c.to_header_s }.join(',')
     end
   end
 
@@ -167,17 +167,18 @@ module Verbs
 
     def to_header_s
 
-      ret = ''
-      ret << @name << '=' << @value
-      ret << '; ' << '$Version=' << @version.to_s if @version > 0
-      ret << '; ' << '$Domain=' << @domain if @domain
-      ret << '; ' << '$Port=' << @port if @port
-      ret << '; ' << '$Path=' << @path if @path
-      ret
+      s = ''
+      s << @name << '=' << @value
+      s << '; ' << '$Version=' << @version.to_s if @version > 0
+      s << '; ' << '$Domain=' << @domain if @domain
+      s << '; ' << '$Port=' << @port if @port
+      s << '; ' << '$Path=' << @path if @path
+
+      s
     end
   end
 
-  # Cookies are stored by domain, they via this CookieKey which gathers
+  # Cookies are stored by domain, they "via" this CookieKey which gathers
   # path and name of the cookie.
   #
   class CookieKey
@@ -198,10 +199,12 @@ module Verbs
     end
 
     def hash
+
       "#{@name}|#{@path}".hash
     end
 
     def ==(other)
+
       (@path == other.path and @name == other.name)
     end
 
@@ -229,10 +232,13 @@ module Verbs
     #
     def split_host(host)
 
-      return [ host, nil ] if IP_REGEX.match host
-      i = host.index('.')
-      return [ host, nil ] unless i
-      [ host[0..i-1], host[i..-1] ]
+      if IP_REGEX.match(host)
+        [ host, nil ]
+      elsif i = host.index('.')
+        [ host[0..i - 1], host[i..-1] ]
+      else
+        [ host, nil ]
+      end
     end
   end
 
@@ -245,7 +251,7 @@ module Verbs
 
     def initialize(jar_size)
 
-      @per_domain = LruHash.new jar_size
+      @per_domain = LruHash.new(jar_size)
     end
 
     # Returns the count of cookies currently stored in this jar.
@@ -262,9 +268,9 @@ module Verbs
 
     def remove_cookie(domain, path, cookie)
 
-      (d = @per_domain[domain])
-      return unless d
-      d.delete CookieKey.new(path, cookie)
+      if d = @per_domain[domain]
+        d.delete(CookieKey.new(path, cookie))
+      end
     end
 
     # Retrieves the cookies that matches the combination host/path.
@@ -275,7 +281,7 @@ module Verbs
 
       c = do_fetch(@per_domain[host], path)
 
-      h, d = split_host host
+      h, d = split_host(host)
       c += do_fetch(@per_domain[d], path) if d
 
       c
@@ -287,15 +293,10 @@ module Verbs
     #
     def do_fetch(dh, path)
 
-      return [] unless dh
-
-      keys = dh.keys.sort.find_all do |k|
+      keys = (dh || {}).keys.sort.find_all do |k|
         path[0..k.path.length-1] == k.path
       end
-      keys.inject([]) do |r, k|
-        r << dh[k]
-        r
-      end
+      keys.collect { |k| dh[k] }
     end
   end
 end
