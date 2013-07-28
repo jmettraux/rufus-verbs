@@ -1,4 +1,6 @@
 
+$:.unshift('.') # while working on moving it to spec/
+
 #
 # Testing rufus-verbs
 #
@@ -24,7 +26,7 @@ class ProxyTest < Test::Unit::TestCase
 
     assert_not_nil res0.body # just displaying the test dot
 
-    proxies = find_proxies
+    proxies = fetch_potential_proxies
 
     res1 = nil
 
@@ -75,15 +77,17 @@ class ProxyTest < Test::Unit::TestCase
 
   protected
 
-    def find_proxies
+  def fetch_potential_proxies
 
-      res = get "http://freeproxy.ch/proxy.txt"
-      lines = res.body.split "\n"
-      lines[4..-1].collect do |line|
-        l = line.split("\t")
-        'http://' + l[0]
-      end
-    end
-
+    get(
+      'http://freeproxy.ch/proxy.txt'
+    ).body.lines.to_a.collect { |l|
+      l.split("\t").first
+    }.select { |l|
+      l.match(/^[\d\.]+:\d+$/)
+    }.collect { |l|
+      "http://#{l}"
+    }
+  end
 end
 
