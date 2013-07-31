@@ -8,7 +8,7 @@ class MergeTest < Test::Unit::TestCase
 
 
   def test_0
-    
+
     ep = EndPoint.new(
       :dry_run => true,
       :uri => 'http://host/path',
@@ -18,6 +18,6 @@ class MergeTest < Test::Unit::TestCase
       :params => { 'extra' => 'param'})
 
     assert_equal "/path?token=apiaccess&extra=param", req.path
-    
+
   end
 end

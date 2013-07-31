@@ -53,12 +53,12 @@ class Auth1Test < Test::Unit::TestCase
         assert_equal 6, $dcount
 
         expect 401, nil, get(
-            :uri => "http://localhost:7777/items", 
+            :uri => "http://localhost:7777/items",
             :http_basic_authentication => [ "toto", "toto" ])
         assert_equal 7, $dcount
 
         expect 200, { 1 => "hammer" }, get(
-            :uri => "http://localhost:7777/items", 
+            :uri => "http://localhost:7777/items",
             :digest_authentication => [ "test", "pass" ])
         assert_equal 9, $dcount
     end
